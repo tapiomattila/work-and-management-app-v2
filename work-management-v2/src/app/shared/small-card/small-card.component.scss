@@ -1,0 +1,17 @@
+.grid {
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  align-items: center;
+  width: 100%;
+  padding: 1.5rem;
+}
+
+.small-cards__total-hours--title,
+.small-cards__current-hours--title {
+  color: var(--text-light);
+  font-weight: var(--font-weight-s);
+}
+.small-cards__total-hours--value,
+.small-cards__current-hours--value {
+  font-weight: var(--font-weight-l);
+}

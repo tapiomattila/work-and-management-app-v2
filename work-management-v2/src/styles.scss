@@ -7,9 +7,33 @@
   --bottom-nav-height: 70px;
   --calc-size: 70px;
   --box-shadow-main: 0 2px 4px 0 rgba(165, 165, 165, 0.25);
-  --font-size-normal: 1.8rem;
-  --font-weight-medium: 500;
+  --box-shadow-card: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
   --bottom-nav-height: 7rem;
+
+  /* Fonts */
+  --font-size-s: 1.4rem;
+  --font-size-m: 1.8rem;
+  --font-size-l: 2.4rem;
+  --font-size-xl: 3.2rem;
+
+  --font-weight-xs: 300;
+  --font-weight-s: 400;
+  --font-weight-m: 500;
+  --font-weight-l: 700;
+
+  /* Sizes */
+  --size-xs: 0.5rem;
+  --size-s: 0.5rem;
+  --size-m: 2rem;
+  --size-l: 0.5rem;
+  --size-xl: 0.5rem;
+
+  --gap-size-s: 1rem;
+  --gap-size-m: 2rem;
+
+  --column-side-size: 2rem;
+
+  --icon: 4.2rem;
 
   // color
   --color-bg: #f5f8ff;
@@ -50,10 +74,30 @@ ul {
 body {
   box-sizing: border-box;
   font-family: "Roboto", sans-serif;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-m);
   line-height: 1.7;
   color: var(--text-dark);
-  font-size: var(--font-size-normal);
+  font-size: var(--font-size-m);
   background: var(--color-bg);
   color: var(--text-dark);
+}
+
+.card {
+  border-radius: var(--size-m);
+  background: var(--color-primary);
+  color: var(--text-dark);
+  box-shadow: var(--box-shadow-card);
+  padding: var(--size-s);
+}
+
+@mixin flexCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin gridRepeatColAndRowFr($col, $row) {
+  display: grid;
+  grid-template-columns: repeat($col, 1fr);
+  grid-template-rows: repeat($row, 1fr);
 }

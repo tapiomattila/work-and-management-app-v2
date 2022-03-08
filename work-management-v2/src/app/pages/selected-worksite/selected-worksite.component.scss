@@ -1,0 +1,41 @@
+@import "../../../styles.scss";
+
+main {
+  display: grid;
+  grid-template-columns: var(--column-side-size) repeat(6, 1fr) var(
+      --column-side-size
+    );
+  grid-template-rows: 5rem minmax(10rem, max-content) 10rem 24rem 2rem;
+  row-gap: var(--gap-size-m);
+  margin-top: var(--size-m);
+  margin-bottom: 10vh;
+}
+
+.sec {
+  grid-column: 2 / span 6;
+}
+
+app-header-profile {
+  display: grid;
+  grid-column: 2 / span 6;
+}
+
+app-worksite-info-card {
+  display: grid;
+  grid-column: 2 / span 6;
+}
+
+app-hours-chart {
+  display: grid;
+  grid-column: 2 / span 6;
+}
+
+app-small-card {
+  display: grid;
+  width: 100%;
+}
+
+.small-cards {
+  display: flex;
+  gap: var(--gap-size-s);
+}
