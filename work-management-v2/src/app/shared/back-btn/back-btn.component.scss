@@ -1,0 +1,19 @@
+@import "../../../styles.scss";
+
+.back-button {
+  height: var(--icon-size);
+  width: var(--icon-size);
+
+  &__btn {
+    width: var(--icon);
+    height: var(--icon);
+
+    @include flexCenter;
+    box-shadow: var(--box-shadow-card);
+    border-radius: var(--border-radius-btn);
+  }
+}
+
+.icon {
+  @include flexCenter;
+}

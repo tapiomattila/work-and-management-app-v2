@@ -1,0 +1,21 @@
+@import "../../../styles.scss";
+
+.header {
+  color: var(--text-dark);
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  align-items: center;
+
+  &__title {
+    grid-column: 1 / -1;
+    grid-row: 1 / 2;
+    @include flexCenter;
+    z-index: -1;
+    font-size: var(--font-size-l);
+  }
+}
+
+app-back-btn {
+  grid-column: 1 / -1;
+  grid-row: 1 / 2;
+}

@@ -1,52 +1,23 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-
-interface NavItems {
-  li1: boolean;
-  li2: boolean;
-  li3: boolean;
-  li4: boolean;
-  li5: boolean;
-}
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { resetActive, setActiveValue } from '../utils/functions';
+import { NavigationObserverService } from '../utils/navigation-observer.service';
 
 @Component({
   selector: 'app-navigation',
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.scss'],
 })
-export class NavigationComponent {
+export class NavigationComponent implements OnInit {
   @Output() change = new EventEmitter();
+  constructor(public navigationObs: NavigationObserverService) {}
 
-  navItems: NavItems = {
-    li1: true,
-    li2: false,
-    li3: false,
-    li4: false,
-    li5: false,
-  };
-
-  constructor() {}
+  ngOnInit(): void {
+    this.navigationObs.observeNavigation();
+  }
 
   setActive(value: string) {
-    this.resetActive(this.navItems);
-    this.setActiveValue(this.navItems, value);
+    resetActive(this.navigationObs.navItems);
+    setActiveValue(this.navigationObs.navItems, value);
     this.change.emit(value);
-  }
-
-  resetActive(navItems: NavItems) {
-    const obj = navItems;
-    let k: keyof typeof obj;
-    for (k in obj) {
-      obj[k] = false;
-    }
-  }
-
-  setActiveValue(navItems: NavItems, inputValue: string) {
-    const obj = navItems;
-    let k: keyof typeof obj;
-    for (k in obj) {
-      if (k === inputValue) {
-        obj[k] = true;
-      }
-    }
   }
 }

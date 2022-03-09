@@ -2,14 +2,15 @@ import { Component, Input, OnInit } from '@angular/core';
 import { convertToHoursAndMinutes } from 'src/app/utils/functions';
 
 @Component({
-  selector: 'app-small-card',
-  templateUrl: './small-card.component.html',
-  styleUrls: ['./small-card.component.scss'],
+  selector: 'app-worksite-list-element',
+  templateUrl: './worksite-list-element.component.html',
+  styleUrls: ['./worksite-list-element.component.scss'],
 })
-export class SmallCardComponent implements OnInit {
+export class WorksiteListElementComponent implements OnInit {
   getValue: string | undefined;
 
-  @Input() title: string | undefined;
+  @Input() name: string | undefined;
+
   @Input()
   set value(value: number) {
     const hours = value / 60;
@@ -26,8 +27,4 @@ export class SmallCardComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
-
-  get getTitle() {
-    return `${this.title}:`;
-  }
 }

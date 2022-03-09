@@ -22,11 +22,11 @@
   --font-weight-l: 700;
 
   /* Sizes */
-  --size-xs: 0.5rem;
+  --size-xs: 0.3rem;
   --size-s: 0.5rem;
-  --size-m: 2rem;
-  --size-l: 0.5rem;
-  --size-xl: 0.5rem;
+  --size-m: 1rem;
+  --size-l: 2rem;
+  --size-xl: 4rem;
 
   --gap-size-s: 1rem;
   --gap-size-m: 2rem;
@@ -34,6 +34,7 @@
   --column-side-size: 2rem;
 
   --icon: 4.2rem;
+  --border-radius-btn: 0.6rem;
 
   // color
   --color-bg: #f5f8ff;
@@ -87,7 +88,7 @@ body {
   background: var(--color-primary);
   color: var(--text-dark);
   box-shadow: var(--box-shadow-card);
-  padding: var(--size-s);
+  padding: var(--size-m) var(--size-l);
 }
 
 @mixin flexCenter {
