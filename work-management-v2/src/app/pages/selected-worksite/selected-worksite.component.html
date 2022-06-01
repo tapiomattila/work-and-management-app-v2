@@ -1,17 +1,21 @@
-<main>
-  <app-header-profile
-    [name]="'Mary'"
-    [date]="'Thu 23 Sep, 2021'"
-  ></app-header-profile>
+<div class="flex-container">
   <app-worksite-info-card
     [title]="'Pirkkala Citymarket'"
     [address]="'Palmrothintie 2, 33950 Pirkkala'"
     [bgBlue]="true"
   ></app-worksite-info-card>
+</div>
 
-  <div class="sec small-cards">
-    <app-small-card [title]="'Total hours'" [value]="6120"></app-small-card>
-    <app-small-card [title]="'Current day'" [value]="735"></app-small-card>
-  </div>
-  <app-hours-chart></app-hours-chart>
-</main>
+<div class="sec small-cards">
+  <app-small-card
+    style="justify-content: end"
+    [title]="'Total hours'"
+    [value]="6120"
+  ></app-small-card>
+  <app-small-card
+    style="justify-content: start"
+    [title]="'Current day'"
+    [value]="735"
+  ></app-small-card>
+</div>
+<app-hours-chart></app-hours-chart>

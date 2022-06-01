@@ -1,11 +1,9 @@
 @import "../../../styles.scss";
 
 main {
-  display: grid;
-  grid-template-columns: var(--column-side-size) repeat(6, 1fr) var(
-      --column-side-size
-    );
-  grid-template-rows: 5rem 1fr;
+  margin: 0 var(--column-side-size);
+  display: flex;
+  flex-direction: column;
   row-gap: var(--gap-size-m);
   margin-top: var(--size-m);
   margin-bottom: 10vh;
@@ -13,10 +11,16 @@ main {
 
 app-header {
   display: grid;
-  grid-column: 2 / span 6;
 }
 
-app-worksite-list-element {
-  display: grid;
-  grid-column: 2 / span 6;
+.worksite-list {
+  &__container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--gap-size-m);
+
+    @media only screen and (min-width: $bp-medium) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
 }

@@ -4,11 +4,13 @@
   /* Variables */
   --indicator-size: 70px;
   --list-el-size: 70px;
-  --bottom-nav-height: 70px;
+  // --bottom-nav-height: 70px;
   --calc-size: 70px;
   --box-shadow-main: 0 2px 4px 0 rgba(165, 165, 165, 0.25);
   --box-shadow-card: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
   --bottom-nav-height: 7rem;
+
+  --header-height: 5rem;
 
   /* Fonts */
   --font-size-s: 1.4rem;
@@ -51,6 +53,12 @@
   --text-light: #858aaa;
   --text-light-sub: #b3b7ca;
 }
+
+$bp-largest: 75em;     // 1200px
+$bp-large: 68.75em;    // 1100px
+$bp-medium: 50em;   // 800px
+$bp-small: 37.5em;     // 600px
+$bp-smallest: 31.25em; // 500px
 
 *,
 *::before,

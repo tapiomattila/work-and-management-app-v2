@@ -1,26 +1,29 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { ListItems, Routes } from './utils/enums/navigation.enum';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { BreakpointState } from '@angular/cdk/layout';
+import { Subscription } from 'rxjs';
+import { BreakpointService } from './services/breakpoint.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-  constructor(private router: Router) {}
+export class AppComponent implements OnInit, OnDestroy {
 
-  getChange(event: string) {
-    switch (event) {
-      case ListItems.ITEM1:
-        this.router.navigate([Routes.SELECTED]);
-        break;
-      case ListItems.ITEM2:
-        this.router.navigate([Routes.LIST]);
-        break;
-      default:
-        this.router.navigate([Routes.SELECTED]);
-        break;
-    }
+  observerSub: Subscription[] = [];
+
+  constructor(
+    public bpService: BreakpointService
+  ) { }
+
+  ngOnInit(): void {
+    const break800$ = this.bpService.observeBreakpoint().subscribe((state: BreakpointState) => {
+      state.matches && !this.bpService.over1200 ? this.bpService.isHeader = false : this.bpService.isHeader = true;
+    });
+    this.observerSub.push(break800$);
+  }
+
+  ngOnDestroy(): void {
+    this.observerSub.forEach(el => el.unsubscribe());
   }
 }

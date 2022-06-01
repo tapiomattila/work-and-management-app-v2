@@ -6,9 +6,10 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { SelectedWorksiteModule } from './pages/selected-worksite/selected-worksite.module';
 import { SharedModule } from './shared/shared.module';
 import { WorksiteListModule } from './pages/worksite-list/worksite-list.module';
+import { NavigationBarComponent } from './layout/navigation-bar/navigation-bar.component';
 
 @NgModule({
-  declarations: [AppComponent, NavigationComponent],
+  declarations: [AppComponent, NavigationComponent, NavigationBarComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

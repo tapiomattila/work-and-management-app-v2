@@ -14,6 +14,11 @@
 
   font-weight: var(--font-weight-s);
 
+  aspect-ratio: 3 / 1;
+
+  min-width: 30rem;
+  min-height: 10rem;
+
   &__name {
     grid-column: 1 / -1;
     font-size: var(--font-size-l);
