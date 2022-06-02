@@ -7,6 +7,8 @@ import { SelectedWorksiteModule } from './pages/selected-worksite/selected-works
 import { SharedModule } from './shared/shared.module';
 import { WorksiteListModule } from './pages/worksite-list/worksite-list.module';
 import { NavigationBarComponent } from './layout/navigation-bar/navigation-bar.component';
+import { AddHoursPageModule } from './pages/add-hours-page/add-hours-page.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent, NavigationComponent, NavigationBarComponent],
@@ -16,8 +18,10 @@ import { NavigationBarComponent } from './layout/navigation-bar/navigation-bar.c
     SharedModule,
     WorksiteListModule,
     SelectedWorksiteModule,
+    AddHoursPageModule,
+    BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

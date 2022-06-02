@@ -46,6 +46,8 @@
   --color-tertiarry: #776bea;
   --color-tertiarry-light: #bfdff4;
   --color-non-active: #bcbcbc;
+  --color-icon-accent: #858AAA;
+
 
   // text
   --text-dark: #454858;
@@ -54,10 +56,10 @@
   --text-light-sub: #b3b7ca;
 }
 
-$bp-largest: 75em;     // 1200px
-$bp-large: 68.75em;    // 1100px
-$bp-medium: 50em;   // 800px
-$bp-small: 37.5em;     // 600px
+$bp-largest: 75em; // 1200px
+$bp-large: 68.75em; // 1100px
+$bp-medium: 50em; // 800px
+$bp-small: 37.5em; // 600px
 $bp-smallest: 31.25em; // 500px
 
 *,
@@ -110,3 +112,6 @@ body {
   grid-template-columns: repeat($col, 1fr);
   grid-template-rows: repeat($row, 1fr);
 }
+
+// html, body { height: 100%; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

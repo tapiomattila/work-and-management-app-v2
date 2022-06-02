@@ -1,0 +1,89 @@
+@import "../../../styles.scss";
+
+main {
+  margin: 0 var(--column-side-size);
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--gap-size-m);
+  margin-top: var(--size-m);
+
+  justify-content: center;
+  //   margin-bottom: 10vh;
+
+  @media only screen and (min-width: $bp-medium) {
+    margin-bottom: 10vh;
+  }
+
+}
+
+.flex-container {
+  @include flexCenter();
+}
+
+app-worksite-info-card {
+  height: 100%;
+  width: 100%;
+  max-width: 50rem;
+}
+
+.test {
+  display: grid;
+  justify-content: start;
+}
+
+.marked {
+  &--text {
+    color: var(--dark-text);
+    font-size: 2.4rem;
+    font-weight: 500;
+  }
+
+  &--hours {
+    color: var(--color-secondary);
+    font-size: 3.2rem;
+    font-weight: bold;
+  }
+}
+
+.date {
+  display: flex;
+  justify-content: space-between;
+
+  &--text {
+    font-weight: 400;
+  }
+
+  &--date {
+    color: var(--color-secondary);
+  }
+}
+
+.dropdown {
+  display: flex;
+  justify-content: space-between;
+
+  &--text {
+    font-weight: 400;
+  }
+
+  &--carrot {
+    color: var(--color-icon-accent);
+  }
+}
+
+.marked-hours-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 25rem;
+}
+
+.test-container {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 60rem;
+
+  display: grid;
+  gap: 2rem;
+
+}

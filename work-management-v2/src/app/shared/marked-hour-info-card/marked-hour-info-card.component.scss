@@ -1,0 +1,23 @@
+@import "../../../styles.scss";
+
+.marked-hours {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: flex-end;
+
+  &--date {
+    font-size: 1.4rem;
+    grid-column: 1 / -1;
+  }
+
+  &--worktype {
+    font-weight: bold;
+    color: var(--text-dark);
+    font-size: 1.4rem;
+  }
+
+  &--hours {
+    font-weight: bold;
+    color: var(--color-secondary);
+  }
+}

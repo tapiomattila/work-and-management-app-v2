@@ -7,6 +7,8 @@ import { HeaderComponent } from './header/header.component';
 import { BackBtnComponent } from './back-btn/back-btn.component';
 import { WorksiteListElementComponent } from './worksite-list-element/worksite-list-element.component';
 import { HeaderProfileComponent } from './header-profile/header-profile.component';
+import { MarkedHoursCardComponent } from './marked-hours-card/marked-hours-card.component';
+import { MarkedHourInfoCardComponent } from './marked-hour-info-card/marked-hour-info-card.component';
 
 @NgModule({
   imports: [CommonModule],
@@ -18,6 +20,8 @@ import { HeaderProfileComponent } from './header-profile/header-profile.componen
     SmallCardComponent,
     BackBtnComponent,
     WorksiteListElementComponent,
+    MarkedHoursCardComponent,
+    MarkedHourInfoCardComponent,
   ],
   declarations: [
     HeaderProfileComponent,
@@ -27,7 +31,9 @@ import { HeaderProfileComponent } from './header-profile/header-profile.componen
     SmallCardComponent,
     BackBtnComponent,
     WorksiteListElementComponent,
+    MarkedHoursCardComponent,
+    MarkedHourInfoCardComponent,
   ],
   providers: [],
 })
-export class SharedModule {}
+export class SharedModule { }

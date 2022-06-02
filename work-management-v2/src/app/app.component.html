@@ -1,9 +1,6 @@
 <div class="container">
   <header class="header" *ngIf="bpService.isHeader">
-    <app-header-profile
-      [name]="'Mary'"
-      [date]="'Thu 23 Sep, 2021'"
-    ></app-header-profile>
+    <app-header-profile [name]="'Mary'" [date]="'Thu 23 Sep, 2021'"></app-header-profile>
   </header>
   <div class="content">
     <app-navigation-bar [isHeader]="bpService.isHeader"></app-navigation-bar>
