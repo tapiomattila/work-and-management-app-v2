@@ -1,0 +1,56 @@
+@import "../../../styles.scss";
+
+:host {
+  max-width: 70rem;
+  margin: 0 auto;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--gap-size-s);
+  justify-content: center;
+
+  margin: 0 var(--column-side-size);
+  margin-top: var(--size-m);
+
+  @media only screen and (min-width: $bp-medium) {
+    margin-bottom: 10vh;
+  }
+}
+
+.flex-container {
+  @include flexCenter();
+}
+
+app-worksite-info-card {
+  height: 100%;
+  width: 100%;
+  max-width: var(--info-card-max-width);
+}
+
+app-marked-hour-info-card {
+  width: 70%;
+  max-width: 40rem;
+  min-width: 25rem;
+}
+
+.element {
+  position: relative;
+  // max-width: 70vw;
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--gap-size-s);
+  justify-content: center;
+  margin-bottom: 1rem;
+
+  @media only screen and (min-width: $bp-medium) {
+    width: 100%;
+    max-width: 50rem;
+  }
+
+  @media only screen and (min-width: $bp-large) {
+    // width: 80%;
+    // max-width: 50rem;
+  }
+}

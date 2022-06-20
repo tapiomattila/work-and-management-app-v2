@@ -28,7 +28,7 @@ app-worksite-info-card {
   &__container {
     margin: 0 auto;
     width: 100%;
-    max-width: 60rem;
+    max-width: var(--info-card-max-width);
 
     display: grid;
     gap: var(--gap-size-m);
@@ -56,7 +56,7 @@ app-worksite-info-card {
   &--hours {
     color: var(--color-secondary);
     font-size: var(--font-size-xl);
-    font-weight: var(--font-size-m);
+    font-weight: var(--font-weight-l);
   }
 }
 

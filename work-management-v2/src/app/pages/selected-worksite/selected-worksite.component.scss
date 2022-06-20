@@ -29,5 +29,5 @@ app-hours-chart {
 app-worksite-info-card {
   height: 100%;
   width: 100%;
-  max-width: 50rem;
+  max-width: var(--info-card-max-width);
 }

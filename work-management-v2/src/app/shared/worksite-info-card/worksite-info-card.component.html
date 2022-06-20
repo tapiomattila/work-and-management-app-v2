@@ -3,6 +3,12 @@
     <p>{{ title ? title : "no title" }}</p>
   </div>
   <div class="worksite-info__address">
-    <p>{{ address ? address : "no address" }}</p>
+    <!-- <p>{{ address ? address : "no address" }}</p> -->
+    <p *ngIf="address">{{ address }}</p>
+  </div>
+
+  <div *ngIf="totalHours" class="worksite-info__total-hours">
+    <span class="text">Total hours: </span>
+    <span class="hours">102h</span>
   </div>
 </div>
