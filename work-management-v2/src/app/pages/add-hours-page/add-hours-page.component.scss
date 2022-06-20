@@ -1,19 +1,17 @@
 @import "../../../styles.scss";
 
 main {
-  margin: 0 var(--column-side-size);
   display: flex;
   flex-direction: column;
   row-gap: var(--gap-size-m);
-  margin-top: var(--size-m);
-
   justify-content: center;
-  //   margin-bottom: 10vh;
+
+  margin: 0 var(--column-side-size);
+  margin-top: var(--size-m);
 
   @media only screen and (min-width: $bp-medium) {
     margin-bottom: 10vh;
   }
-
 }
 
 .flex-container {
@@ -23,25 +21,42 @@ main {
 app-worksite-info-card {
   height: 100%;
   width: 100%;
-  max-width: 50rem;
+  max-width: var(--info-card-max-width);
 }
 
-.test {
+.add-hours {
+  &__container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 60rem;
+
+    display: grid;
+    gap: var(--gap-size-m);
+  }
+
+  &__component {
+    min-height: var(--min-height-m);
+  }
+}
+
+.added-hours {
   display: grid;
   justify-content: start;
+
+  min-height: var(--min-height-l);
 }
 
 .marked {
   &--text {
     color: var(--dark-text);
-    font-size: 2.4rem;
-    font-weight: 500;
+    font-size: var(--font-size-l);
+    font-weight: var(--font-weight-m);
   }
 
   &--hours {
     color: var(--color-secondary);
-    font-size: 3.2rem;
-    font-weight: bold;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-size-m);
   }
 }
 
@@ -50,7 +65,7 @@ app-worksite-info-card {
   justify-content: space-between;
 
   &--text {
-    font-weight: 400;
+    font-weight: var(--font-weight-s);
   }
 
   &--date {
@@ -63,7 +78,7 @@ app-worksite-info-card {
   justify-content: space-between;
 
   &--text {
-    font-weight: 400;
+    font-weight: var(--font-size-s);
   }
 
   &--carrot {
@@ -74,16 +89,6 @@ app-worksite-info-card {
 .marked-hours-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  min-height: 25rem;
-}
-
-.test-container {
-  margin: 0 auto;
-  width: 100%;
-  max-width: 60rem;
-
-  display: grid;
-  gap: 2rem;
-
+  gap: var(--gap-size-s);
+  min-height: var(--min-height-xl);
 }

@@ -1,41 +1,44 @@
 <main>
-    <app-header [title]="'Add Hours'"></app-header>
-    <div class="flex-container">
-        <app-worksite-info-card [title]="'Pirkkala Citymarket'"
-            [address]="'Palmrothintie 2, 33950 Pirkkala'" [bgBlue]="true">
-        </app-worksite-info-card>
+  <app-header [title]="'Add Hours'"></app-header>
+  <div class="flex-container">
+    <app-worksite-info-card
+      [title]="'Pirkkala Citymarket'"
+      [address]="'Palmrothintie 2, 33950 Pirkkala'"
+      [bgBlue]="true"
+    >
+    </app-worksite-info-card>
+  </div>
+
+  <div class="add-hours__container">
+    <div class="card flex-container added-hours">
+      <p class="marked--text">Day marked hours:</p>
+      <p class="marked--hours">17h 30m</p>
     </div>
 
-    <div class="test-container">
-        <div class="card flex-container test" style="min-height: 10rem;">
-            <p class="marked--text">Day marked hours:</p>
-            <p class="marked--hours">17h 30m</p>
-        </div>
-
-        <div class="card flex-container date" style="min-height: 5rem;">
-            <p class="date--text">Date</p>
-            <p class="date--date">Thu 23 Sep, 2021</p>
-        </div>
-
-        <div class="card flex-container dropdown" style="min-height: 5rem;">
-            <p class="dropdown--text">Worksite</p>
-            <p class="dropdown--carrot">ii</p>
-        </div>
-
-        <div class="card flex-container dropdown" style="min-height: 5rem;">
-            <p class="dropdown--text">Worktype</p>
-            <p class="dropdown--carrot">ii</p>
-        </div>
-
-        <div class="card flex-container dropdown" style="min-height: 5rem;">
-            <p class="dropdown--text">range</p>
-            <p class="dropdown--carrot">ii</p>
-        </div>
-
-        <div class="card marked-hours-container">
-            <app-marked-hour-info-card></app-marked-hour-info-card>
-            <app-marked-hour-info-card></app-marked-hour-info-card>
-            <app-marked-hour-info-card></app-marked-hour-info-card>
-        </div>
+    <div class="card flex-container date add-hours__component">
+      <p class="date--text">Date</p>
+      <p class="date--date">Thu 23 Sep, 2021</p>
     </div>
+
+    <div class="card flex-container dropdown add-hours__component">
+      <p class="dropdown--text">Worksite</p>
+      <p class="dropdown--carrot">ii</p>
+    </div>
+
+    <div class="card flex-container dropdown add-hours__component">
+      <p class="dropdown--text">Worktype</p>
+      <p class="dropdown--carrot">ii</p>
+    </div>
+
+    <div class="card flex-container dropdown add-hours__component">
+      <p class="dropdown--text">range</p>
+      <p class="dropdown--carrot">ii</p>
+    </div>
+
+    <div class="card marked-hours-container">
+      <app-marked-hour-info-card></app-marked-hour-info-card>
+      <app-marked-hour-info-card></app-marked-hour-info-card>
+      <app-marked-hour-info-card></app-marked-hour-info-card>
+    </div>
+  </div>
 </main>

@@ -4,17 +4,17 @@
   display: flex;
   flex-direction: column;
 
-  margin: 1rem;
-  margin-top: 2rem;
-  margin-bottom: calc(var(--header-height) + 2rem);
-  gap: 2rem;
+  margin: var(--size-m);
+  margin-top: var(--size-l);
+  margin-bottom: calc(var(--header-height) + var(--size-l));
+  gap: var(--gap-size-m);
 }
 
 .sec {
   display: flex;
   width: 100%;
   justify-content: center;
-  gap: 2rem;
+  gap: var(--gap-size-m);
 }
 
 app-hours-chart {

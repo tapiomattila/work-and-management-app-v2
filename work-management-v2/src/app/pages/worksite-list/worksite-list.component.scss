@@ -1,12 +1,11 @@
 @import "../../../styles.scss";
 
 main {
-  margin: 0 var(--column-side-size);
   display: flex;
   flex-direction: column;
+  margin: 0 var(--column-side-size);
   row-gap: var(--gap-size-m);
   margin-top: var(--size-m);
-  // margin-bottom: 10vh;
 }
 
 app-header {

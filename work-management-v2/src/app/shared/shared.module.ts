@@ -10,29 +10,31 @@ import { HeaderProfileComponent } from './header-profile/header-profile.componen
 import { MarkedHoursCardComponent } from './marked-hours-card/marked-hours-card.component';
 import { MarkedHourInfoCardComponent } from './marked-hour-info-card/marked-hour-info-card.component';
 
+const components = [
+  HeaderProfileComponent,
+  HeaderComponent,
+  WorksiteInfoCardComponent,
+  HoursChartComponent,
+  SmallCardComponent,
+  BackBtnComponent,
+  WorksiteListElementComponent,
+  MarkedHoursCardComponent,
+  MarkedHourInfoCardComponent,
+];
+
+const modules = [
+  CommonModule
+]
+
 @NgModule({
-  imports: [CommonModule],
-  exports: [
-    HeaderProfileComponent,
-    HeaderComponent,
-    WorksiteInfoCardComponent,
-    HoursChartComponent,
-    SmallCardComponent,
-    BackBtnComponent,
-    WorksiteListElementComponent,
-    MarkedHoursCardComponent,
-    MarkedHourInfoCardComponent,
+  imports: [
+    ...modules
   ],
   declarations: [
-    HeaderProfileComponent,
-    HeaderComponent,
-    WorksiteInfoCardComponent,
-    HoursChartComponent,
-    SmallCardComponent,
-    BackBtnComponent,
-    WorksiteListElementComponent,
-    MarkedHoursCardComponent,
-    MarkedHourInfoCardComponent,
+    ...components
+  ],
+  exports: [
+    ...components
   ],
   providers: [],
 })

@@ -2,15 +2,22 @@
 
 :root {
   /* Variables */
-  --indicator-size: 70px;
-  --list-el-size: 70px;
-  // --bottom-nav-height: 70px;
-  --calc-size: 70px;
+  --indicator-size: 7rem;
+  --list-el-size: 7rem;
+  // --bottom-nav-height: 7rem;
+  --calc-size: 7rem;
   --box-shadow-main: 0 2px 4px 0 rgba(165, 165, 165, 0.25);
   --box-shadow-card: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
   --bottom-nav-height: 7rem;
 
   --header-height: 5rem;
+  --global-transition-time: .5s;
+
+  --info-card-max-width: 50rem;
+
+  --min-height-m: 5rem;
+  --min-height-l: 10rem;
+  --min-height-xl: 25rem;
 
   /* Fonts */
   --font-size-s: 1.4rem;

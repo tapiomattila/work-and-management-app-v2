@@ -1,7 +1,7 @@
 @import "../../../styles.scss";
 
 .header {
-  padding: 1rem;
+  padding: var(--size-m);
   color: var(--color-white);
   background: var(--color-bg);
 

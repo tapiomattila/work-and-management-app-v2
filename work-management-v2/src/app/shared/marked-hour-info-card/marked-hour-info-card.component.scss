@@ -5,19 +5,21 @@
   grid-template-columns: repeat(2, 1fr);
   align-items: flex-end;
 
+  min-height: var(--min-height-m);
+
   &--date {
-    font-size: 1.4rem;
+    font-size: var(--font-size-s);
     grid-column: 1 / -1;
   }
 
   &--worktype {
-    font-weight: bold;
+    font-weight: var(--font-weight-l);
     color: var(--text-dark);
-    font-size: 1.4rem;
+    font-size: var(--font-size-s);
   }
 
   &--hours {
-    font-weight: bold;
+    font-weight: var(--font-weight-l);
     color: var(--color-secondary);
   }
 }
