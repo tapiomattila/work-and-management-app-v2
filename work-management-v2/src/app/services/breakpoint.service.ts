@@ -13,6 +13,6 @@ export class BreakpointService {
     ) { }
 
     observeBreakpoint() {
-        return this.breakpointObserver.observe(['(min-width: 800px)'])
+        return this.breakpointObserver.observe([this.minw800])
     }
 }

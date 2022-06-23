@@ -4,6 +4,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
+import { environment } from '../environments/environment';
+
 // components
 import { NavigationBarComponent } from './layout/navigation-bar/navigation-bar.component';
 
@@ -16,8 +18,18 @@ import { WorksiteListModule } from './pages/worksite-list/worksite-list.module';
 import { AddHoursPageModule } from './pages/add-hours-page/add-hours-page.module';
 import { HoursListModule } from './pages/hours-list-page/hours-list.module';
 
+
+// Firebase
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { SETTINGS as AUTH_SETTINGS } from '@angular/fire/compat/auth';
+import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+
 @NgModule({
-  declarations: [AppComponent, NavigationBarComponent],
+  declarations: [
+    AppComponent,
+    NavigationBarComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -27,8 +39,13 @@ import { HoursListModule } from './pages/hours-list-page/hours-list.module';
     SelectedWorksiteModule,
     AddHoursPageModule,
     HoursListModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirestore(() => getFirestore()),
   ],
-  providers: [],
+  providers: [
+    { provide: AUTH_SETTINGS, useValue: { appVerificationDisabledForTesting: true } },
+    { provide: FIREBASE_OPTIONS, useValue: environment.firebase }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

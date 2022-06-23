@@ -20,6 +20,7 @@
   left: 0;
   width: 100%;
   height: var(--header-height);
+  z-index: var(--z-index-top);
 }
 
 .content {
@@ -47,7 +48,7 @@ app-navigation-bar {
     position: fixed;
     bottom: 0;
     width: 100%;
-    z-index: 100;
+    z-index: var(--z-index-top);
     height: var(--header-height);
     border-right: none;
   }

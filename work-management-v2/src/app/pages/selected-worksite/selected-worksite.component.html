@@ -1,6 +1,6 @@
 <div class="flex-container">
-  <app-worksite-info-card
-    [title]="'Pirkkala Citymarket'"
+  <app-worksite-info-card *ngIf="mostRecentWorksite$ | async as recent"
+    [title]="recent.name"
     [bgBlue]="true"
   ></app-worksite-info-card>
 </div>
