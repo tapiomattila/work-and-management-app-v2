@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { Hour } from '../utils/models/hours.interface';
 import { Worksite } from '../utils/models/worksite.interface';
+
+interface WsMarked {
+    wsId: string;
+    marked: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class WorksiteStoreService {
@@ -51,4 +57,35 @@ export class WorksiteStoreService {
             map(arr => arr.length > 0 ? arr[0] : null)
         )
     }
+
+    mapHoursToWorksites(worksites: Worksite[], hours$: Observable<Hour[]>) {
+        const wsMarked: WsMarked[] = [];
+        const worksitesArr: Worksite[] = [];
+        return hours$.pipe(
+            tap(hours => {
+                hours.forEach(el => {
+                    const obj: WsMarked = {
+                        wsId: el.worksiteId,
+                        marked: el.marked
+                    };
+                    wsMarked.push(obj);
+                })
+            }),
+            map(() => {
+                worksites.forEach(el => {
+                    const filtered = wsMarked.filter(els => els.wsId === el.id);
+                    const mapped = filtered.map(el => el.marked);
+                    const reduced = mapped.reduce((prev, cur) => prev + cur, 0);
+
+                    const comp = {
+                        ...el,
+                        marked: reduced * 60
+                    } as Worksite;
+                    worksitesArr.push(comp);
+                });
+                return worksitesArr;
+            })
+        )
+    }
+
 }

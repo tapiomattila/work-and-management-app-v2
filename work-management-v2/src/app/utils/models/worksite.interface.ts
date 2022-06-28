@@ -9,6 +9,7 @@ export interface Worksite {
     deleted: boolean;
     locationInfo: Address;
     users: string[];
+    marked?: number
 }
 
 interface Address {

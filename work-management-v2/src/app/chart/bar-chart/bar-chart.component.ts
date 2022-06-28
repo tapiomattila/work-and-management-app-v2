@@ -25,7 +25,7 @@ export class BarChartComponent implements OnInit {
 
   labels: string[] = [];
   dataArr: number[] = [];
-  @Input() header = 'Best fruits22';
+  @Input() header = 'Daily hours';
 
   barChartOptions: ChartOptions = {
     responsive: true,
@@ -33,11 +33,6 @@ export class BarChartComponent implements OnInit {
     borderColor: 'rgba(225,10,24,0.2)',
 
   };
-  // colorOptions: CommonHoverOptions = {
-  //   hoverBackgroundColor: "#fff",
-  //   hoverBorderColor: "#000",
-  //   hoverBorderWidth: 2
-  // }
   barChartLabels: BaseChartDirective["labels"] = this.labels
   barChartType: ChartType = 'bar';
   barChartLegend = false;

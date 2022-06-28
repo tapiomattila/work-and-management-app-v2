@@ -4,6 +4,15 @@ import { map } from 'rxjs/operators';
 import { compareToCurrentDate } from '../utils/functions';
 import { Hour } from '../utils/models/hours.interface';
 
+interface TestObj {
+    [prop: string]: object[];
+}
+
+interface WsMarked22 {
+    wsId: string;
+    hour: Hour;
+}
+
 @Injectable({ providedIn: 'root' })
 export class HoursStoreService {
 
@@ -95,6 +104,31 @@ export class HoursStoreService {
 
     filterHoursByWorksite(hours: Hour[], worksiteID: string) {
         return hours.filter(els => els.worksiteId === worksiteID);
+    }
+
+    mapHoursToWorksites(hours: Hour[]) {
+        console.log('show hours', hours);
+
+        const wsMarked: WsMarked22[] = [];
+        hours.forEach(el => {
+            const obj: WsMarked22 = {
+                wsId: el.worksiteId,
+                hour: el
+            };
+            wsMarked.push(obj);
+        });
+
+        const groupMarkedByWsID = wsMarked.reduce((group: TestObj, object) => {
+            const { wsId } = object;
+            console.log(object);
+            console.log(wsId);
+            group[wsId] = group[wsId] ?? [];
+            console.log(group[wsId]);
+            group[wsId].push(object);
+            return group;
+        }, {});
+
+        return of([]);
     }
 
     testFilter() {

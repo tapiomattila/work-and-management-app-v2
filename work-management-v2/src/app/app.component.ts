@@ -20,8 +20,6 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * TODO
    * - add hours material components
-   * - chart.js chart on selected page
-   * - sel func
    */
   constructor(
     private dataService: DataService,

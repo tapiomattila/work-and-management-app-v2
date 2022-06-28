@@ -8,7 +8,7 @@
   color: var(--text-dark);
   font-size: var(--font-size-s);
 
-  @include gridRepeatColAndRowFr(5, 2);
+  @include gridRepeatColAndRowFr(6, 2);
   align-items: center;
 
   &__profile-circle {
@@ -22,12 +22,16 @@
 
   &__welcome-message {
     color: var(--text-dark);
-    grid-column: 2 / span 3;
+    grid-column: 1 / -1;
+    grid-row: 1 / 2;
+    text-align: center;
   }
 
   &__date {
     color: var(--text-light-sub);
-    grid-column: 2 / span 3;
+    grid-column: 1 / -1;
+    grid-row: 2 / 3;
+    text-align: center;
     font-weight: var(--font-weight-s);
   }
 }

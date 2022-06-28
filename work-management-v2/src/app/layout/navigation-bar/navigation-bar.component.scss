@@ -74,8 +74,11 @@ li.active rect {
   }
 
   .date {
-    color: var(--color-tertiarry-light);
+    color: var(--text-light);
     font-size: var(--font-size-s);
+    font-weight: var(--font-weight-s);
+    // color: var(--color-tertiarry-light);
+    // font-size: var(--font-size-s);
   }
 }
 
@@ -136,13 +139,23 @@ ul {
   }
 }
 
+span {
+  display: block;
+
+  @media only screen and (max-width: 800px) {
+    display: none;
+  }
+}
+
 .list-item {
   display: flex;
   align-items: center;
   width: 75%;
   gap: var(--gap-size-m);
+  min-height: 4.5rem;
 
   @media only screen and (max-width: 800px) {
-    width: auto;
+    // width: auto;
+    min-height: auto;
   }
 }
