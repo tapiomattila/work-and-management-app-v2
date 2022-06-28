@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { HoursStoreService } from 'src/app/services/hours.store.service';
 import { WorksiteStoreService } from 'src/app/services/worksite.store.service';
-import { compareToCurrentDate, mostRecentWorksite } from 'src/app/utils/functions';
+import { compareToCurrentDate, hoursReduce, mostRecentWorksite } from 'src/app/utils/functions';
 import { Hour } from 'src/app/utils/models/hours.interface';
 import { Worksite } from 'src/app/utils/models/worksite.interface';
 
@@ -37,7 +37,7 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
         return ws ? this.hourStore.selectHoursByWorksiteID(ws.id) : [];
       }),
       map(hours => {
-        return this.hoursReduce(hours);
+        return hoursReduce(hours);
       })
     )
 
@@ -50,16 +50,9 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
         return hours ? this.currentDayHours(hours) : [];
       }),
       map(hours => {
-        return this.hoursReduce(hours);
+        return hoursReduce(hours);
       })
     );
-  }
-
-  hoursReduce(hours: Hour[]) {
-    const marked = hours?.map(el => el.marked);
-    const reduce = marked.reduce((prev, cur) => prev + cur, 0);
-    const totalMinutes = reduce * this.minutesInHour;
-    return totalMinutes;
   }
 
   currentDayHours(hours: Hour[]) {

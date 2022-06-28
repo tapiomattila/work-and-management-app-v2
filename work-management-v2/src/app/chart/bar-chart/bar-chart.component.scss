@@ -1,0 +1,13 @@
+.chart-wrapper {
+  min-height: 24rem;
+  min-width: 30rem;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  @media only screen and (min-width: 800px) {
+    min-height: 31rem;
+    min-width: 44rem;
+  }
+}

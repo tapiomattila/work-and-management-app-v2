@@ -18,17 +18,19 @@ import { WorksiteListModule } from './pages/worksite-list/worksite-list.module';
 import { AddHoursPageModule } from './pages/add-hours-page/add-hours-page.module';
 import { HoursListModule } from './pages/hours-list-page/hours-list.module';
 
-
 // Firebase
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { SETTINGS as AUTH_SETTINGS } from '@angular/fire/compat/auth';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { ChartModule } from './chart/chart.module';
+import { PieChartComponent } from './chart/pie-chart/pie-chart.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavigationBarComponent,
+    PieChartComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,6 +41,7 @@ import { FIREBASE_OPTIONS } from '@angular/fire/compat';
     SelectedWorksiteModule,
     AddHoursPageModule,
     HoursListModule,
+    ChartModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
   ],

@@ -10,6 +10,7 @@ import { HeaderProfileComponent } from './header-profile/header-profile.componen
 import { MarkedHoursCardComponent } from './marked-hours-card/marked-hours-card.component';
 import { MarkedHourInfoCardComponent } from './marked-hour-info-card/marked-hour-info-card.component';
 import { GoogleSigninDirective } from '../utils/directives/google-signin.directive';
+import { ChartModule } from '../chart/chart.module';
 
 const components = [
   HeaderProfileComponent,
@@ -22,11 +23,11 @@ const components = [
   MarkedHoursCardComponent,
   MarkedHourInfoCardComponent,
   GoogleSigninDirective
-
 ];
 
 const modules = [
-  CommonModule
+  CommonModule,
+  ChartModule
 ]
 
 @NgModule({

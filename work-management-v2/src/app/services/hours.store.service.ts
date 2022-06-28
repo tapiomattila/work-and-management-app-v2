@@ -35,11 +35,14 @@ export class HoursStoreService {
      * @returns Observable<Worksite[]>
      */
     selectHoursByUID(uid: string) {
-        console.log(
-            'uid: ', uid
-        );
-
-        return of([]);
+        return this.hours$.pipe(
+            map(hours => hours.filter(el => {
+                if (el.userId === uid) {
+                    return el;
+                }
+                return;
+            }))
+        )
     }
 
     /**

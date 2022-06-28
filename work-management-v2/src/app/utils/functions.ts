@@ -1,3 +1,4 @@
+import { Hour } from "./models/hours.interface";
 import { Worksite } from "./models/worksite.interface";
 
 export function convertToHoursAndMinutes(value: number) {
@@ -47,4 +48,11 @@ export function compareToCurrentDate(inputDate: string) {
     curYear === compYear
 
   return compare;
+}
+
+export function hoursReduce(hours: Hour[]) {
+  const marked = hours?.map(el => el.marked);
+  const reduce = marked.reduce((prev, cur) => prev + cur, 0);
+  const totalMinutes = reduce * 60;
+  return totalMinutes;
 }

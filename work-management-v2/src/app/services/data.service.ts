@@ -20,23 +20,6 @@ export class DataService {
     ) { }
 
     /**
-     * map fetched worksites docs (by uid) to Worksite[]
-     * @param auth firebase.default.User
-     * @returns Worksite[]
-     */
-    mapWorksitesByUID(auth: firebase.default.User) {
-        if (auth) {
-            return this.fetchWorksitesByUID(auth.uid).pipe(
-                map(res => {
-                    return this.mapSnapToWorksite(res);
-                }),
-            );
-        } else {
-            return of([]);
-        }
-    }
-
-    /**
      * Get Worksite[] data observable either from store if present or fetch data from database.
      * Side-effect: push data to store if fetch is used (no initial data in store)
      * @returns Observable Worksite[] 
@@ -56,6 +39,23 @@ export class DataService {
             )
         } else {
             return [];
+        }
+    }
+
+    /**
+ * map fetched worksites docs (by uid) to Worksite[]
+ * @param auth firebase.default.User
+ * @returns Worksite[]
+ */
+    mapWorksitesByUID(auth: firebase.default.User) {
+        if (auth) {
+            return this.fetchWorksitesByUID(auth.uid).pipe(
+                map(res => {
+                    return this.mapSnapToWorksite(res);
+                }),
+            );
+        } else {
+            return of([]);
         }
     }
 
