@@ -1,3 +1,4 @@
 export enum DatabaseCollection {
-    WORKSITES = 'worksites'
+    WORKSITES = 'worksites',
+    HOURS = 'hours'
 }

@@ -1,20 +1,42 @@
 <div class="flex-container">
-  <app-worksite-info-card *ngIf="mostRecentWorksite$ | async as recent"
-    [title]="recent.name"
-    [bgBlue]="true"
-  ></app-worksite-info-card>
+  <ng-container *ngIf="mostRecentWorksite$ | async as recent; else noInfo">
+    <app-worksite-info-card
+      [title]="recent.name"
+      [bgBlue]="true"
+    ></app-worksite-info-card>
+  </ng-container>
+  <ng-template #noInfo>
+    <div class="card info-card">
+      <h2>loading info</h2>
+    </div>
+  </ng-template>
 </div>
 
 <div class="sec small-cards">
-  <app-small-card
-    style="justify-content: end"
-    [title]="'Total hours'"
-    [value]="6120"
-  ></app-small-card>
-  <app-small-card
-    style="justify-content: start"
-    [title]="'Current day'"
-    [value]="735"
-  ></app-small-card>
+  <ng-container *ngIf="total$ | async as total; else nocard1">
+    <app-small-card
+      style="justify-content: end"
+      [title]="'Total hours'"
+      [value]="total"
+    ></app-small-card>
+  </ng-container>
+  <ng-template #nocard1>
+    <div class="card">
+      <h2>loading card 1</h2>
+    </div>
+  </ng-template>
+
+  <ng-container *ngIf="totalForDay$ | async as currentDay; else nocard2">
+    <app-small-card
+      style="justify-content: start"
+      [title]="'Current day'"
+      [value]="currentDay"
+    ></app-small-card>
+  </ng-container>
+  <ng-template #nocard2>
+    <div class="card">
+      <h2>loading card 2</h2>
+    </div>
+  </ng-template>
 </div>
 <app-hours-chart></app-hours-chart>

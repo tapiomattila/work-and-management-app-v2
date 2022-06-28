@@ -31,3 +31,18 @@ app-worksite-info-card {
   width: 100%;
   max-width: var(--info-card-max-width);
 }
+
+.card {
+  aspect-ratio: 16 / 9;
+  max-height: 14rem;
+  max-width: 24rem;
+
+  height: 90%;
+  width: 90%;
+}
+
+.info-card {
+  height: 100%;
+  width: 100%;
+  max-width: var(--info-card-max-width);
+}

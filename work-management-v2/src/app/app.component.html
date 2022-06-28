@@ -7,18 +7,17 @@
     ></app-header-profile>
     <div style="display: flex;">
       <button (click)="authService.signout()">Signout</button>
-      <p
+      <!-- <p
       style="flex: 1; text-align: end"
       *ngIf="authService.authenticated() | async as user"
     >
     {{ user.uid }} <br>
     {{ user.email }}
-    </p>
+    </p> -->
   </div>
-  <h2>auth: {{ authService.isAuthenticated$ | async }}</h2>
+  <!-- <h2>auth: {{ authService.isAuthenticated$ | async }}</h2> -->
   </header>
   <div class="content">
-    <button (click)="getUserWorksites()">TEST TEST TEST</button>
     <app-navigation-bar [isHeader]="bpService.isHeader"></app-navigation-bar>
     <main class="main">
       <router-outlet></router-outlet>

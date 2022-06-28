@@ -40,4 +40,15 @@ export class WorksiteStoreService {
             })
         )
     }
+
+    selectWorksiteById(id: string) {
+        return this.worksites$.pipe(
+            map(els => {
+                return els.filter(el => {
+                    return el.id === id;
+                })
+            }),
+            map(arr => arr.length > 0 ? arr[0] : null)
+        )
+    }
 }

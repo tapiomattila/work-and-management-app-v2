@@ -29,3 +29,22 @@ export function mostRecentWorksite(worksites: Worksite[]) {
   });;
   return worksites.find(el => el.id === max.id);
 }
+
+export function compareToCurrentDate(inputDate: string) {
+  const date = new Date();
+  const comp = new Date(inputDate);
+
+  const curDay = date.getDate();
+  const curMonth = date.getMonth();
+  const curYear = date.getFullYear();
+
+  const compDay = comp.getDate();
+  const compMonth = comp.getMonth();
+  const compYear = comp.getFullYear();
+
+  const compare = curDay === compDay &&
+    curMonth === compMonth &&
+    curYear === compYear
+
+  return compare;
+}

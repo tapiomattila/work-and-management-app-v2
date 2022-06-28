@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BreakpointState } from '@angular/cdk/layout';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { BreakpointService } from './services/breakpoint.service';
 import { DataService } from './services/data.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AuthService } from './services/auth.service';
 import { WorksiteStoreService } from './services/worksite.store.service';
+import { shareReplay, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,6 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * TODO
    * - add hours material components
-   * - data service firebase connection ***
    * - chart.js chart on selected page
    * - sel func
    */
@@ -37,20 +37,40 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     this.observerSub.push(break800$);
 
-    const ws$ = this.wsStore.worksites$.subscribe(res => console.log('store: ', res));
-    this.observerSub.push(ws$);
+    const authStateChange$ = this.afAuth.authState.pipe(
+      shareReplay()
+    );
 
-    const authStateChange$ = this.afAuth.authState.subscribe(() => this.getUserWorksites());
-    this.observerSub.push(authStateChange$);
+    const hours$ = this.getUserHours(authStateChange$).subscribe(res => console.log('hours: ', res));
+    const worksites$ = this.getUserWorksites(authStateChange$).subscribe(res => console.log('ws: ', res));
+
+    this.observerSub.push(hours$);
+    this.observerSub.push(worksites$);
   }
 
-  getUserWorksites() {
-    this.wsStore.clearWorksites();
-    const auth$ = this.afAuth.authState;
-    const userWorksites$ = this.dataService.worksitesByUIDFetchOrStore(auth$);
-    const pushToWorksiteStore$ = this.dataService.populateWorksiteStore(userWorksites$);
-    const worksites$ = pushToWorksiteStore$.subscribe();
-    this.observerSub.push(worksites$);
+  getUserHours(authChange$: Observable<firebase.default.User | null>) {
+    return authChange$.pipe(
+      switchMap(auth => {
+        if (auth) {
+          return this.dataService.hoursByUIDFetchOrStore(auth);
+        } else {
+          return [];
+        }
+      })
+    );
+  }
+
+  getUserWorksites(authChange$: Observable<firebase.default.User | null>) {
+    return authChange$.pipe(
+      tap(() => this.wsStore.clearWorksites()),
+      switchMap(auth => {
+        if (auth) {
+          return this.dataService.worksitesByUIDFetchOrStore(auth);
+        } else {
+          return [];
+        }
+      })
+    )
   }
 
   ngOnDestroy(): void {

@@ -2,9 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { AuthService } from 'src/app/services/auth.service';
-import { DataService } from 'src/app/services/data.service';
-import { mostRecentWorksite } from 'src/app/utils/functions';
+import { HoursStoreService } from 'src/app/services/hours.store.service';
+import { WorksiteStoreService } from 'src/app/services/worksite.store.service';
+import { compareToCurrentDate, mostRecentWorksite } from 'src/app/utils/functions';
+import { Hour } from 'src/app/utils/models/hours.interface';
 import { Worksite } from 'src/app/utils/models/worksite.interface';
 
 @Component({
@@ -15,60 +16,71 @@ import { Worksite } from 'src/app/utils/models/worksite.interface';
 export class SelectedWorksiteComponent implements OnInit, OnDestroy {
 
   worksitesSubs: Subscription | undefined;
-  worksites$: Observable<Worksite[]> | undefined;
 
+  total$: Observable<number | undefined> | undefined;
+  minutesInHour = 60;
+
+  totalForDay$: Observable<any | undefined> | undefined;
   mostRecentWorksite$: Observable<Worksite | undefined> | undefined;
 
   constructor(
-    private dataService: DataService,
-    private authService: AuthService
+    private wsStore: WorksiteStoreService,
+    private hourStore: HoursStoreService,
   ) { }
 
   ngOnInit(): void {
-    // const ws$ = this.dataService.worksites$;
-    // this.worksitesSubs = this.dataService.
+    this.mostRecentWorksite$ = this.mostRecentWorksite();
 
+    // total hours for worksite
+    this.total$ = this.mostRecentWorksite$.pipe(
+      switchMap(ws => {
+        return ws ? this.hourStore.selectHoursByWorksiteID(ws.id) : [];
+      }),
+      map(hours => {
+        return this.hoursReduce(hours);
+      })
+    )
 
-    // this.worksites$ = this.dataService.worksites$;
-    // this.worksitesSubs = this.dataService.getWorksitesStoreOrFetch().subscribe();
-    // // this.dataService.getWorksitesStoreOrFetch().subscribe();
-    // // this.worksites$.subscribe(res => console.log('worksites res', res));
+    // // total hours for current day
+    this.totalForDay$ = this.mostRecentWorksite$.pipe(
+      switchMap(ws => {
+        return ws ? this.hourStore.selectHoursByWorksiteID(ws.id) : [];
+      }),
+      map(hours => {
+        return hours ? this.currentDayHours(hours) : [];
+      }),
+      map(hours => {
+        return this.hoursReduce(hours);
+      })
+    );
+  }
 
-    // // const data$ = this.dataService.fetchWorksites();
-    // // data$.subscribe(res => console.log(res));
+  hoursReduce(hours: Hour[]) {
+    const marked = hours?.map(el => el.marked);
+    const reduce = marked.reduce((prev, cur) => prev + cur, 0);
+    const totalMinutes = reduce * this.minutesInHour;
+    return totalMinutes;
+  }
 
-    // this.worksites$.subscribe(res => console.log('show res ws', res));
+  currentDayHours(hours: Hour[]) {
+    const currentDayHours: Hour[] = [];
+    hours.forEach(el => {
+      // if (compareToCurrentDate(el.updatedAt.toString())) {
+      currentDayHours.push(el);
+      // }
+    })
+    return currentDayHours;
+  }
 
-    // this.mostRecentWorksite$ = this.worksites$.pipe(
-    //   map(res => mostRecentWorksite(res)),
-    // );
-
-    // // this.mostRecentWorksite$.subscribe(res => console.log('shwo recent', res));
-
-
-    // const test$ = this.authService.isAuthenticated$.pipe(
-    //   switchMap(auth => {
-    //     console.log('show auth', auth);
-    //     return this.authService.worksitesByUID();
-    //   }),
-    //   switchMap(() => {
-    //     return this.
-    //   })
-    // );
-
-    // test$.subscribe(res => console.log('shwo ws by uid: ', res));
+  // TODO:
+  // when url id selected ws is implemented, change to selected worksite (or recent)
+  mostRecentWorksite() {
+    return this.wsStore.worksites$.pipe(
+      map(res => mostRecentWorksite(res)),
+    );
   }
 
   ngOnDestroy(): void {
     this.worksitesSubs?.unsubscribe();
   }
 }
-
-
-/**
- * - select user worksites
- * - get most recent changes
- * - select user hours
- * - collect hours for recent worksites (by uid)
- * - collect hours for current day
- */
