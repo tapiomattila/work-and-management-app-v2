@@ -1,11 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { HoursStoreService } from 'src/app/services/hours.store.service';
 import { WorksiteStoreService } from 'src/app/services/worksite.store.service';
-import { compareToCurrentDate, hoursReduce, mostRecentWorksite } from 'src/app/utils/functions';
-import { Hour } from 'src/app/utils/models/hours.interface';
+import { hoursReduce, mostRecentWorksite } from 'src/app/utils/functions';
 import { Worksite } from 'src/app/utils/models/worksite.interface';
 
 @Component({
@@ -29,12 +28,14 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.mostRecentWorksite$ = this.mostRecentWorksite();
+    this.mostRecentWorksite$ = this.wsStore.worksites$.pipe(
+      map(res => mostRecentWorksite(res)),
+    );
 
     // total hours for worksite
     this.total$ = this.mostRecentWorksite$.pipe(
       switchMap(ws => {
-        return ws ? this.hourStore.selectHoursByWorksiteID(ws.id) : [];
+        return ws ? this.hourStore.selectHoursByWorksite(ws.id) : [];
       }),
       map(hours => {
         return hoursReduce(hours);
@@ -44,32 +45,9 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
     // // total hours for current day
     this.totalForDay$ = this.mostRecentWorksite$.pipe(
       switchMap(ws => {
-        return ws ? this.hourStore.selectHoursByWorksiteID(ws.id) : [];
+        if (!ws) return of(undefined);
+        return this.hourStore.selectCurrentDayHoursByWorksite(ws.id);
       }),
-      map(hours => {
-        return hours ? this.currentDayHours(hours) : [];
-      }),
-      map(hours => {
-        return hoursReduce(hours);
-      })
-    );
-  }
-
-  currentDayHours(hours: Hour[]) {
-    const currentDayHours: Hour[] = [];
-    hours.forEach(el => {
-      // if (compareToCurrentDate(el.updatedAt.toString())) {
-      currentDayHours.push(el);
-      // }
-    })
-    return currentDayHours;
-  }
-
-  // TODO:
-  // when url id selected ws is implemented, change to selected worksite (or recent)
-  mostRecentWorksite() {
-    return this.wsStore.worksites$.pipe(
-      map(res => mostRecentWorksite(res)),
     );
   }
 

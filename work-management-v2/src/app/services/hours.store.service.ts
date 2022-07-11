@@ -1,17 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
 import { compareToCurrentDate } from '../utils/functions';
 import { Hour } from '../utils/models/hours.interface';
-
-interface TestObj {
-    [prop: string]: object[];
-}
-
-interface WsMarked22 {
-    wsId: string;
-    hour: Hour;
-}
+import { AuthService } from './auth.service';
+import { DataService } from './data.service';
 
 @Injectable({ providedIn: 'root' })
 export class HoursStoreService {
@@ -19,7 +12,10 @@ export class HoursStoreService {
     private hoursSubj = new BehaviorSubject<Hour[]>([]);
     hours$ = this.hoursSubj.asObservable();
 
-    constructor() { }
+    constructor(
+        private dataService: DataService,
+        private authService: AuthService
+    ) { }
 
     /**
      * Subject store hours
@@ -39,9 +35,34 @@ export class HoursStoreService {
     }
 
     /**
-     * select store worksites
-     * @param uid user uid
+     * select hour from store by hour id
+     * @param id hour id
+     * @returns Observable<Hour | null>
+     */
+    selectHourByID(id: string) {
+        return this.hours$.pipe(
+            map(els => els.filter(el => el.id === id)),
+            map(els => els.length ? els[0] : null)
+        )
+    }
+
+    /**
+     * select hours by worksite by worksite id
+     * @param id worksite id
      * @returns Observable<Worksite[]>
+     */
+    selectHoursByWorksite(id: string) {
+        return this.hours$.pipe(
+            map(els => els.filter(el => {
+                return el.worksiteId === id
+            })),
+        )
+    }
+
+    /**
+     * select hours from store by user uid
+     * @param uid user unique id
+     * @returns Observable<Hour[]>
      */
     selectHoursByUID(uid: string) {
         return this.hours$.pipe(
@@ -55,21 +76,20 @@ export class HoursStoreService {
     }
 
     /**
-     * all user hours
-     * @param id 
-     * @returns 
+     * uid from auth state changes in function.
+     * fetch from backend or select from store if present.
+     * select hours by UID
+     * @returns Observable<Hour[]>
      */
-    selectHoursByWorksiteID(id: string) {
-        return this.hours$.pipe(
-            map(els => els.filter(el => {
-                return el.worksiteId === id
-            })),
+    fetchOrStoreHoursByUID() {
+        return this.authService.authState$.pipe(
+            switchMap(auth => auth ? this.hoursByUIDFetchOrStore(auth) : of([]))
         )
     }
 
     /**
-     * all user hours
-     * @returns 
+     * select current day hours from store
+     * @returns Observable<Hour[]>
      */
     selectCurrentDayHours() {
         return this.hours$.pipe(
@@ -80,62 +100,52 @@ export class HoursStoreService {
     }
 
     /**
-     * all user hours
-     * @returns 
+     * selectc current day hour by worksite id
+     * @param id worksite id
+     * @returns Observable<number>
      */
     selectCurrentDayHoursByWorksite(id: string) {
         return this.hours$.pipe(
-            map(elements => elements.filter(el => {
-                return compareToCurrentDate(el.updatedAt.toString());
-            })),
-            map(hours => hours.filter(el => {
-                if (el.worksiteId === id) {
-                    return el;
-                }
-                return;
-            })),
-            map(hours => {
-                return hours?.map(el => el.marked)
+            map(elements => {
+                return elements
+                    // .filter(el => compareToCurrentDate(el.updatedAt.toString())
+                    .filter(el => el.worksiteId === id
+                    ).map(el => el.marked || 0
+                    ).reduce((prev, cur) => prev + cur, 0)
             }),
-            map(el => el?.reduce((prev, cur) => prev + cur, 0)),
             map(total => total * 60)
         );
     }
 
+    /**
+     * filter input hours by input worksite id
+     * @param hours Hour[]
+     * @param worksiteID id string
+     * @returns Hour[]
+     */
     filterHoursByWorksite(hours: Hour[], worksiteID: string) {
         return hours.filter(els => els.worksiteId === worksiteID);
     }
 
-    mapHoursToWorksites(hours: Hour[]) {
-        console.log('show hours', hours);
-
-        const wsMarked: WsMarked22[] = [];
-        hours.forEach(el => {
-            const obj: WsMarked22 = {
-                wsId: el.worksiteId,
-                hour: el
-            };
-            wsMarked.push(obj);
-        });
-
-        const groupMarkedByWsID = wsMarked.reduce((group: TestObj, object) => {
-            const { wsId } = object;
-            console.log(object);
-            console.log(wsId);
-            group[wsId] = group[wsId] ?? [];
-            console.log(group[wsId]);
-            group[wsId].push(object);
-            return group;
-        }, {});
-
-        return of([]);
-    }
-
-    testFilter() {
-        return this.hours$.pipe(
-            map(els => els.filter(el => {
-                return el.worksiteId === '9lkuBHzagpFDYoSNMdfQ'
-            })),
+    /**
+    * Get Hour[] data observable either from store if present or fetch data from database.
+    * Side-effect: push data to store if fetch is used (no initial data in store)
+    * @returns Observable Hour[] 
+    */
+    private hoursByUIDFetchOrStore(auth: firebase.default.User) {
+        if (!auth) {
+            return of([]);
+        }
+        return this.selectHoursByUID(auth.uid).pipe(
+            distinctUntilChanged(),
+            switchMap((hours: Hour[]) => {
+                if (hours.length > 0) {
+                    return of(hours);
+                }
+                return this.dataService.fetchHoursByUID(auth.uid).pipe(
+                    tap(res => this.storeHoursPush(res))
+                );
+            })
         )
     }
 }

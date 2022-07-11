@@ -31,6 +31,11 @@ export function mostRecentWorksite(worksites: Worksite[]) {
   return worksites.find(el => el.id === max.id);
 }
 
+/**
+ * compare input string date value to current date
+ * @param inputDate input date {string}
+ * @returns boolean, isCurrentDate
+ */
 export function compareToCurrentDate(inputDate: string) {
   const date = new Date();
   const comp = new Date(inputDate);
@@ -43,16 +48,19 @@ export function compareToCurrentDate(inputDate: string) {
   const compMonth = comp.getMonth();
   const compYear = comp.getFullYear();
 
-  const compare = curDay === compDay &&
+  const isCurrentDate = curDay === compDay &&
     curMonth === compMonth &&
     curYear === compYear
 
-  return compare;
+  return isCurrentDate;
 }
 
+/**
+ * reduce input hours Hour[] marked values (hours) to single minutes value
+ * @param hours Hour[]
+ * @returns minutes, Number
+ */
 export function hoursReduce(hours: Hour[]) {
-  const marked = hours?.map(el => el.marked);
-  const reduce = marked.reduce((prev, cur) => prev + cur, 0);
-  const totalMinutes = reduce * 60;
-  return totalMinutes;
+  const reducedHours = hours?.map(el => el.marked).reduce((prev, cur) => prev + cur, 0);
+  return reducedHours * 60;
 }

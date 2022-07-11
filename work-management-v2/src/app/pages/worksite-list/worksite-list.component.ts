@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { AuthService } from 'src/app/services/auth.service';
-import { DataService } from 'src/app/services/data.service';
+import { filter, switchMap, take, tap } from 'rxjs/operators';
 import { HoursStoreService } from 'src/app/services/hours.store.service';
 import { WorksiteStoreService } from 'src/app/services/worksite.store.service';
 import { Worksite } from 'src/app/utils/models/worksite.interface';
@@ -17,20 +15,31 @@ export class WorksiteListComponent implements OnInit {
   worksites$: Observable<Partial<Worksite>[] | undefined> | undefined;
 
   constructor(
-    private authService: AuthService,
-    private dataService: DataService,
     private wsStore: WorksiteStoreService,
     private hoursStore: HoursStoreService
   ) { }
 
   ngOnInit(): void {
-    this.worksites$ = this.authService.afAuth.authState.pipe(
-      switchMap(auth => auth ? this.dataService.worksitesByUIDFetchOrStore(auth) : of([])),
-      switchMap(worksites => worksites ? this.wsStore.mapHoursToWorksites(worksites, this.hoursStore.hours$) : of([]))
+    this.wsStore.clearWorksites();
+
+    // worksites.length ? this.wsStore.mapHoursToWorksites(worksites, this.hoursStore.hours$) : of([])
+    // this.worksites$ =
+    const test$ =this.wsStore.fetchOrStoreWorksitesByUID().pipe(
+      // tap(() => this.wsStore.clearWorksites()),
+      // tap(res => console.log('fetch ws', res)),
+      switchMap((worksites: Worksite[]) => worksites.length ? this.wsStore.mapHoursToWorksites(worksites, this.hoursStore.hours$) : of([])),
+      // tap(res => console.log('marked ws: ', res))
     );
+
+    test$.subscribe(res => console.log('fe res', res));
+    this.worksites$ = test$;
+
+
+    // TODO
+    // figure why double render appears
   }
 
-  test(worksite: Partial<Worksite> | undefined) {
-    console.log('shwo worksite', worksite);
-  }
+  // test(worksite: Partial<Worksite> | undefined) {
+  //   console.log('shwo worksite', worksite);
+  // }
 }

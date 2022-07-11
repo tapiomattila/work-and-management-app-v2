@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { Hour } from '../utils/models/hours.interface';
 import { Worksite } from '../utils/models/worksite.interface';
+import { AuthService } from './auth.service';
+import { DataService } from './data.service';
 
 interface WsMarked {
     wsId: string;
@@ -15,7 +17,10 @@ export class WorksiteStoreService {
     private worksitesSubj = new BehaviorSubject<Worksite[]>([]);
     worksites$ = this.worksitesSubj.asObservable();
 
-    constructor() { }
+    constructor(
+        private dataService: DataService,
+        private authService: AuthService
+    ) { }
 
     /**
      * Subject store worksites
@@ -34,11 +39,11 @@ export class WorksiteStoreService {
         this.worksitesSubj.next([]);
     }
 
-    /**
-     * select store worksites
-     * @param uid user uid
-     * @returns Observable<Worksite[]>
-     */
+    // /**
+    //  * select store worksites
+    //  * @param uid user uid
+    //  * @returns Observable<Worksite[]>
+    //  */
     selectWorksitesByUID(uid: string) {
         return this.worksites$.pipe(
             map((res: Worksite[]) => {
@@ -47,6 +52,11 @@ export class WorksiteStoreService {
         )
     }
 
+    /**
+     * select worksite from store by worksite id
+     * @param id worksiteID
+     * @returns Observable<Worksite | null>
+     */
     selectWorksiteById(id: string) {
         return this.worksites$.pipe(
             map(els => {
@@ -56,6 +66,19 @@ export class WorksiteStoreService {
             }),
             map(arr => arr.length > 0 ? arr[0] : null)
         )
+    }
+
+    /**
+     * uid from auth state changes in function.
+     * fetch from backend or select from store if present.
+     * select worksites by UID
+     * @returns Observable<Worksite[]>
+     */
+    fetchOrStoreWorksitesByUID(): Observable<Worksite[]> {
+        const worksites$ = this.authService.authState$.pipe(
+            switchMap(auth => auth ? this.worksitesByUIDFetchOrStore(auth) : of([]))
+        )
+        return worksites$;
     }
 
     mapHoursToWorksites(worksites: Worksite[], hours$: Observable<Hour[]>) {
@@ -73,13 +96,14 @@ export class WorksiteStoreService {
             }),
             map(() => {
                 worksites.forEach(el => {
-                    const filtered = wsMarked.filter(els => els.wsId === el.id);
-                    const mapped = filtered.map(el => el.marked);
-                    const reduced = mapped.reduce((prev, cur) => prev + cur, 0);
+                    const mapped = wsMarked
+                        .filter(els => els.wsId === el.id)
+                        .map(el => el.marked)
+                        .reduce((prev, cur) => prev + cur, 0);
 
                     const comp = {
                         ...el,
-                        marked: reduced * 60
+                        marked: mapped * 60
                     } as Worksite;
                     worksitesArr.push(comp);
                 });
@@ -88,4 +112,27 @@ export class WorksiteStoreService {
         )
     }
 
-}
+    /**
+     * Get Worksite[] data observable either from store if present or fetch data from database.
+     * Side-effect: push data to store if fetch is used (no initial data in store)
+     * @returns Observable Worksite[] 
+     */
+    private worksitesByUIDFetchOrStore(auth: firebase.default.User) {
+        if (!auth) {
+            return of([]);
+        }
+
+        return this.selectWorksitesByUID(auth.uid).pipe(
+            switchMap((ws: Worksite[]) => {
+                return ws.length ? of(ws) : this.dataService.fetchWorksitesByUID(auth.uid).pipe(
+                    tap(res => {
+                        if (res.length) {
+                            this.storeWorksitesPush(res);
+                        }
+                    })
+                )
+            }),
+        )
+    }
+
+}   

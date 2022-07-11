@@ -11,26 +11,25 @@ import { NavigationBarComponent } from './layout/navigation-bar/navigation-bar.c
 
 // Misc
 import { SharedModule } from './shared/shared.module';
+import { MaterialModule } from './libraries/material.module';
 
 // Features
 import { SelectedWorksiteModule } from './pages/selected-worksite/selected-worksite.module';
 import { WorksiteListModule } from './pages/worksite-list/worksite-list.module';
 import { AddHoursPageModule } from './pages/add-hours-page/add-hours-page.module';
 import { HoursListModule } from './pages/hours-list-page/hours-list.module';
+import { ChartModule } from './chart/chart.module';
 
 // Firebase
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { SETTINGS as AUTH_SETTINGS } from '@angular/fire/compat/auth';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
-import { ChartModule } from './chart/chart.module';
-import { PieChartComponent } from './chart/pie-chart/pie-chart.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavigationBarComponent,
-    PieChartComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,6 +41,7 @@ import { PieChartComponent } from './chart/pie-chart/pie-chart.component';
     AddHoursPageModule,
     HoursListModule,
     ChartModule,
+    MaterialModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
   ],

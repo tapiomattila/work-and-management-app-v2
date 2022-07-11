@@ -1,21 +1,21 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { WorksiteStoreService } from './worksite.store.service';
+import { BehaviorSubject, from, Subscription } from 'rxjs';
+import { shareReplay, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
     authSubscription: Subscription | undefined;
 
-    isAuthenticatedSubj = new BehaviorSubject<boolean>(false);
+    private isAuthenticatedSubj = new BehaviorSubject<boolean>(false);
     isAuthenticated$ = this.isAuthenticatedSubj.asObservable();
 
-    constructor(
-        private wsStore: WorksiteStoreService,
-        public afAuth: AngularFireAuth,
+    private authStateSubj = new BehaviorSubject<firebase.default.User | null>(null);
+    authState$ = this.authStateSubj.asObservable();
 
+    constructor(
+        public afAuth: AngularFireAuth,
     ) {
         this.setAuthStateObserver();
     }
@@ -25,8 +25,19 @@ export class AuthService {
     }
 
     signout() {
-        this.wsStore.clearWorksites();
         return this.afAuth.signOut();
+    }
+
+    selectAuthUser() {
+        return from(this.afAuth.currentUser);
+    }
+
+    selectAuthState() {
+        const authStateChange$ = this.afAuth.authState.pipe(
+            shareReplay(),
+            // tap(auth => console.log('show auth', auth))
+        );
+        return authStateChange$;
     }
 
     private setAuthStateObserver() {
@@ -39,6 +50,10 @@ export class AuthService {
                 }
             })
         ).subscribe();
+    }
+
+    changeAuthState(auth: firebase.default.User | null) {
+        this.authStateSubj.next(auth);
     }
 
 }

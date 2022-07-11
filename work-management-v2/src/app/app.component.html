@@ -5,9 +5,9 @@
       [date]="'Thu 23 Sep, 2021'"
       appGoogleSignin
     ></app-header-profile>
-    <div style="display: flex;">
-      <button (click)="authService.signout()">Signout</button>
-  </div>
+    <div style="display: flex">
+      <button (click)="signout()">Signout</button>
+    </div>
   </header>
   <div class="content">
     <app-navigation-bar [isHeader]="bpService.isHeader"></app-navigation-bar>
