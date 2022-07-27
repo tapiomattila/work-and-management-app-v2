@@ -15,57 +15,57 @@ export class DataService {
         private firestore: Firestore,
     ) { }
 
-    /**
-     * fetch worksites by user uid
-     * @param uid unique id string
-     * @returns Observable<Worksite[]>
-     */
-    fetchWorksitesByUID(uid: string) {
-        const collectionRef = collection(this.firestore, DatabaseCollection.WORKSITES);
+    // /**
+    //  * fetch worksites by user uid
+    //  * @param uid unique id string
+    //  * @returns Observable<Worksite[]>
+    //  */
+    // fetchWorksitesByUID(uid: string) {
+    //     const collectionRef = collection(this.firestore, DatabaseCollection.WORKSITES);
 
-        const collectionQuery = query(
-            collectionRef,
-            where('clientId', '==', 'jg22s'),
-            where("users", "array-contains", uid)
-        );
+    //     const collectionQuery = query(
+    //         collectionRef,
+    //         where('clientId', '==', 'jg22s'),
+    //         where("users", "array-contains", uid)
+    //     );
 
-        return this.getWorksiteCollection(collectionQuery);
-    }
+    //     return this.getWorksiteCollection(collectionQuery);
+    // }
 
-    fetchWorksitesByClient(clientID: string) {
-        const collectionRef = collection(this.firestore, DatabaseCollection.WORKSITES);
+    // fetchWorksitesByClient(clientID: string) {
+    //     const collectionRef = collection(this.firestore, DatabaseCollection.WORKSITES);
 
-        const collectionQuery = query(
-            collectionRef,
-            where('clientId', '==', clientID),
-        );
-        return this.getWorksiteCollection(collectionQuery);
-    }
+    //     const collectionQuery = query(
+    //         collectionRef,
+    //         where('clientId', '==', clientID),
+    //     );
+    //     return this.getWorksiteCollection(collectionQuery);
+    // }
 
-    private getWorksiteCollection(collectionQuery: Query<DocumentData>) {
-        return from(getDocs(collectionQuery)).pipe(
-            shareReplay(),
-            distinctUntilChanged(),
-            debounceTime(30),
-            map(res => {
-                return this.mapSnapToWorksite(res);
-            }));;
-    }
+    // private getWorksiteCollection(collectionQuery: Query<DocumentData>) {
+    //     return from(getDocs(collectionQuery)).pipe(
+    //         shareReplay(),
+    //         distinctUntilChanged(),
+    //         debounceTime(30),
+    //         map(res => {
+    //             return this.mapSnapToWorksite(res);
+    //         }));;
+    // }
 
-    private mapSnapToWorksite(snaps: QuerySnapshot<DocumentData>) {
-        const worksites: Worksite[] = [];
-        snaps.forEach((doc: DocumentData) => {
-            const id = doc.id;
-            const data = doc.data();
-            const worksite = {
-                id,
-                ...(data as object)
-            } as Worksite;
-            worksites.push(worksite);
-        });
+    // private mapSnapToWorksite(snaps: QuerySnapshot<DocumentData>) {
+    //     const worksites: Worksite[] = [];
+    //     snaps.forEach((doc: DocumentData) => {
+    //         const id = doc.id;
+    //         const data = doc.data();
+    //         const worksite = {
+    //             id,
+    //             ...(data as object)
+    //         } as Worksite;
+    //         worksites.push(worksite);
+    //     });
 
-        return worksites;
-    }
+    //     return worksites;
+    // }
 
     fetchHoursByUID(uid: string) {
         if (!uid) {

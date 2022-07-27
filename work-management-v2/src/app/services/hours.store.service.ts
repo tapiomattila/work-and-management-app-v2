@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of } from 'rxjs';
-import { distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
+import { distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { SessionQuery } from '../state/session/session.query';
 import { compareToCurrentDate } from '../utils/functions';
 import { Hour } from '../utils/models/hours.interface';
-import { AuthService } from './auth.service';
 import { DataService } from './data.service';
 
 @Injectable({ providedIn: 'root' })
@@ -14,7 +14,7 @@ export class HoursStoreService {
 
     constructor(
         private dataService: DataService,
-        private authService: AuthService
+        private sessionQuery: SessionQuery
     ) { }
 
     /**
@@ -82,8 +82,8 @@ export class HoursStoreService {
      * @returns Observable<Hour[]>
      */
     fetchOrStoreHoursByUID() {
-        return this.authService.authState$.pipe(
-            switchMap(auth => auth ? this.hoursByUIDFetchOrStore(auth) : of([]))
+        return this.sessionQuery.allState$.pipe(
+            switchMap(auth => auth ? this.hoursByUIDFetchOrStore(auth.uid) : of([]))
         )
     }
 
@@ -132,17 +132,17 @@ export class HoursStoreService {
     * Side-effect: push data to store if fetch is used (no initial data in store)
     * @returns Observable Hour[] 
     */
-    private hoursByUIDFetchOrStore(auth: firebase.default.User) {
-        if (!auth) {
+    private hoursByUIDFetchOrStore(uid: string) {
+        if (!uid) {
             return of([]);
         }
-        return this.selectHoursByUID(auth.uid).pipe(
+        return this.selectHoursByUID(uid).pipe(
             distinctUntilChanged(),
             switchMap((hours: Hour[]) => {
                 if (hours.length > 0) {
                     return of(hours);
                 }
-                return this.dataService.fetchHoursByUID(auth.uid).pipe(
+                return this.dataService.fetchHoursByUID(uid).pipe(
                     tap(res => this.storeHoursPush(res))
                 );
             })

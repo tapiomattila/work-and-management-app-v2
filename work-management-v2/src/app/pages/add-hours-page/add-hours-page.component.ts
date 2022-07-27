@@ -3,7 +3,6 @@ import { FormControl } from '@angular/forms';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AuthService } from 'src/app/services/auth.service';
 import { WorktypeStoreService } from 'src/app/services/worktype.store.service';
 
 interface Food {
@@ -48,11 +47,10 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.dateInputAs$ = this.dateInput.valueChanges.pipe(
       map((date: Date) => {
-        console.log('show date', date);
         return moment(date).format('ddd, MMMM Do YYYY')
       })
     )
-    this.dateInputAs$.subscribe(res => console.log('asung', res));
+    this.dateInputAs$.subscribe();
   }
 
   ngAfterViewInit(): void {
