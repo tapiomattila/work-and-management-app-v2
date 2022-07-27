@@ -1,13 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BreakpointState } from '@angular/cdk/layout';
 import { BreakpointService } from './services/breakpoint.service';
-import { HoursStoreService } from './services/hours.store.service';
 import { SessionService } from './state/session/session.service';
 import { WorksiteQuery } from './state/worksites/worksite.query';
 import { SessionQuery } from './state/session/session.query';
 import { of, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { WorksiteService } from './state/worksites/worksite.service';
+import { HourQuery } from './state/hours/hour.query';
+import { WorktypeService } from './state/worktypes/worktype.service';
+import { WorktypeQuery } from './state/worktypes/worktype.query';
 
 @Component({
   selector: 'app-root',
@@ -20,10 +22,12 @@ export class AppComponent implements OnInit, OnDestroy {
   subs: Subscription[] = [];
 
   constructor(
-    private hoursStore: HoursStoreService,
-    private sessionService: SessionService,
+    private hoursQuery: HourQuery,
     private sessionQuery: SessionQuery,
     private worksiteQuery: WorksiteQuery,
+    private worktypeQuery: WorktypeQuery,
+    private worktypeService: WorktypeService,
+    private sessionService: SessionService,
     private wsService: WorksiteService,
     public bpService: BreakpointService,
   ) { }
@@ -34,7 +38,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     this.observerSub.push(break800$);
 
-    const session$ = this.sessionService.setAuthState().subscribe(res => console.log('set session state', res));
+    const session$ = this.sessionService.setAuthState().subscribe();
 
     const ws$ = this.sessionQuery.uid$.pipe(
       switchMap(uid => of(uid)),
@@ -42,15 +46,22 @@ export class AppComponent implements OnInit, OnDestroy {
         return uid ? this.worksiteQuery.selectFetchOrStore(uid) : of([]);
       })
     ).subscribe()
-    const hours$ = this.hoursStore.fetchOrStoreHoursByUID().subscribe();
+
+    const hours$ = this.sessionQuery.uid$.pipe(filter(el => el !== '')).pipe(
+      switchMap(uid => this.hoursQuery.selectFetchOrStore(uid))
+    ).subscribe();
+
+    const worktypes$ = this.sessionQuery.uid$.pipe(filter(el => el !== '')).pipe(
+      switchMap(uid => this.worktypeQuery.selectFetchOrStore(uid))
+    ).subscribe(res => console.log('worktype res', res));
 
     this.subs.push(session$);
     this.subs.push(ws$);
     this.subs.push(hours$);
+    this.subs.push(worktypes$);
   }
 
   signout() {
-    // this.wsStore.clearWorksites();
     this.wsService.clearWorksites();
     this.sessionService.signout();
   }

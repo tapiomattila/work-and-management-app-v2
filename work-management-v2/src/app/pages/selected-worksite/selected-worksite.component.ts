@@ -2,10 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { of, Subscription } from 'rxjs';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { HoursStoreService } from 'src/app/services/hours.store.service';
+import { HourQuery } from 'src/app/state/hours/hour.query';
+import { Worksite } from 'src/app/state/worksites/worksite.model';
 import { WorksiteQuery } from 'src/app/state/worksites/worksite.query';
 import { hoursReduce, mostRecentWorksite } from 'src/app/utils/functions';
-import { Worksite } from 'src/app/utils/models/worksite.interface';
 
 @Component({
   selector: 'app-selected-worksite',
@@ -24,7 +24,7 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
 
   constructor(
     private worksiteQuery: WorksiteQuery,
-    private hourStore: HoursStoreService,
+    private hoursQuery: HourQuery
   ) { }
 
   ngOnInit(): void {
@@ -35,7 +35,7 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
     // total hours for worksite
     this.total$ = this.mostRecentWorksite$.pipe(
       switchMap(ws => {
-        return ws ? this.hourStore.selectHoursByWorksite(ws.id) : [];
+        return ws ? this.hoursQuery.selectHoursByWorksite(ws.id) : [];
       }),
       map(hours => {
         return hoursReduce(hours);
@@ -45,9 +45,8 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
     // // total hours for current day
     this.totalForDay$ = this.mostRecentWorksite$.pipe(
       switchMap(ws => {
-        console.log('show ws most recent', ws);
         if (!ws) return of(undefined);
-        return this.hourStore.selectCurrentDayHoursByWorksite(ws.id);
+        return this.hoursQuery.selectCurrentDayHoursByWorksite(ws.id);
       }),
     );
   }

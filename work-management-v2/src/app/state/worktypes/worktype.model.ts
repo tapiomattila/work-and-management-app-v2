@@ -8,3 +8,10 @@ export interface Worktype {
     updatedAt: string;
     updatedBy: string;
 }
+
+export function createWorktype(worktype: Partial<Worktype>) {
+    return {
+        id: worktype.id,
+        ...worktype,
+    } as Worktype;
+}

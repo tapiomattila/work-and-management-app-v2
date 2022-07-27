@@ -3,7 +3,6 @@ import { FormControl } from '@angular/forms';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { WorktypeStoreService } from 'src/app/services/worktype.store.service';
 
 interface Food {
   value: string;
@@ -41,7 +40,6 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit {
   ];
 
   constructor(
-    private wt: WorktypeStoreService
   ) { }
 
   ngOnInit(): void {

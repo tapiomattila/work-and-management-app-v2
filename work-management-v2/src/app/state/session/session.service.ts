@@ -7,7 +7,7 @@ import { SessionStore } from "./session.store";
 export class SessionService {
 
   constructor(
-    private sessionStore: SessionStore,
+    private store: SessionStore,
     public afAuth: AngularFireAuth,
   ) {
   }
@@ -22,7 +22,7 @@ export class SessionService {
       return;
     }
 
-    this.sessionStore.update({
+    this.store.update({
       uid: auth.uid,
       displayName: auth.displayName,
       email: auth.email
@@ -45,6 +45,6 @@ export class SessionService {
    */
   signout() {
     this.afAuth.signOut();
-    this.sessionStore.reset();
+    this.store.reset();
   }
 }

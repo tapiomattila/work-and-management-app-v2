@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { HoursStoreService } from 'src/app/services/hours.store.service';
+import { combineLatest, Observable } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
+import { Hour } from 'src/app/state/hours/hour.model';
+import { HourQuery } from 'src/app/state/hours/hour.query';
 import { SessionQuery } from 'src/app/state/session/session.query';
+import { Worksite } from 'src/app/state/worksites/worksite.model';
 import { WorksiteQuery } from 'src/app/state/worksites/worksite.query';
 import { WorksiteService } from 'src/app/state/worksites/worksite.service';
-import { Worksite } from 'src/app/utils/models/worksite.interface';
 
 @Component({
   selector: 'app-worksite-list',
@@ -17,22 +18,37 @@ export class WorksiteListComponent implements OnInit {
   worksites$: Observable<Partial<Worksite>[] | undefined> | undefined;
 
   constructor(
-    private hoursStore: HoursStoreService,
+    private hoursQuery: HourQuery,
     private worksiteQuery: WorksiteQuery,
     private worksiteService: WorksiteService,
     private sessionQuery: SessionQuery
   ) { }
 
   ngOnInit(): void {
-    this.worksiteService.clearWorksites();
+    const uid$ = this.sessionQuery.uid$.pipe(
+      filter(el => el !== '')
+    );
 
-    this.worksites$ = this.sessionQuery.uid$.pipe(
-      switchMap(uid => this.worksiteQuery.selectWorksitesByUID(uid)),
-      switchMap((worksites: Worksite[]) => worksites.length ? this.worksiteService.mapHoursToWorksites(worksites, this.hoursStore.hours$) : of([])),
+    const worksites$ = this.worksiteQuery.worksites$.pipe(
+      filter(el => el.length !== 0)
+    )
+
+    const hours$ = this.hoursQuery.selectAll().pipe(
+      filter(el => el.length !== 0)
+    );
+
+    const combined$ = combineLatest([
+      uid$,
+      worksites$,
+      hours$
+    ]);
+
+    this.worksites$ = combined$.pipe(
+      switchMap((res: [string, Worksite[], Hour[]]) => {
+        const [uid, ws, hours] = res;
+        return this.worksiteQuery.selectWorksitesByUID(uid);
+      }),
+      switchMap(ws => this.worksiteService.mapHoursToWorksites(ws, hours$))
     );
   }
-
-  // test(worksite: Partial<Worksite> | undefined) {
-  //   console.log('shwo worksite', worksite);
-  // }
 }

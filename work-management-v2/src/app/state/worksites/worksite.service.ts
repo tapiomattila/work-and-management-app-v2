@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { getDocs, query, where } from '@angular/fire/firestore';
 import { Firestore, Query } from '@angular/fire/firestore';
 import { collection } from '@firebase/firestore';
+import { DocumentData, QuerySnapshot } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, shareReplay, tap } from 'rxjs/operators';
 import { DatabaseCollection } from 'src/app/utils/enums/db.enum';
 import { createWorksite, Worksite } from './worksite.model';
 import { WorksiteStore } from './worksite.store';
-import { DocumentData, QuerySnapshot } from '@angular/fire/firestore';
-import { Hour } from 'src/app/utils/models/hours.interface';
+import { Hour } from '../hours/hour.model';
 
 interface WsMarked {
     wsId: string;
@@ -19,7 +19,7 @@ interface WsMarked {
 export class WorksiteService {
 
     constructor(
-        private worksiteStore: WorksiteStore,
+        private store: WorksiteStore,
         private firestore: Firestore,
     ) { }
 
@@ -28,11 +28,11 @@ export class WorksiteService {
         worksites.forEach(el => {
             worksiteArray.push(createWorksite(el));
         });
-        this.worksiteStore.set(worksiteArray);
+        this.store.set(worksiteArray);
     }
 
     clearWorksites() {
-        this.worksiteStore.reset();
+        this.store.reset();
     }
 
     /**

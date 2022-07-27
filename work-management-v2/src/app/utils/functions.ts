@@ -1,5 +1,5 @@
-import { Hour } from "./models/hours.interface";
-import { Worksite } from "./models/worksite.interface";
+import { Hour } from "../state/hours/hour.model";
+import { Worksite } from "../state/worksites/worksite.model";
 
 export function convertToHoursAndMinutes(value: number) {
   let decimals = value / 60 - Math.floor(value / 60);

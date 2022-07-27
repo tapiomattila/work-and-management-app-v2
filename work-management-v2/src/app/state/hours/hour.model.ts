@@ -12,3 +12,10 @@ export interface Hour {
     worktypeId: string;
     worktypeName: string;
 }
+
+export function createHour(hour: Partial<Hour>) {
+    return {
+        id: hour.id,
+        ...hour,
+    } as Hour;
+}
