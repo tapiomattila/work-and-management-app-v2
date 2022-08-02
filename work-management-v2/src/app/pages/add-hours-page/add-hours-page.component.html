@@ -8,75 +8,87 @@
     >
     </app-worksite-info-card>
   </div>
+  <form [formGroup]="hoursForm">
+    <div class="add-hours__container">
+      <div class="card flex-container added-hours">
+        <p class="marked--text">Day marked hours:</p>
+        <p class="marked--hours">17h 30m</p>
+      </div>
 
-  <div class="add-hours__container">
-    <div class="card flex-container added-hours">
-      <p class="marked--text">Day marked hours:</p>
-      <p class="marked--hours">17h 30m</p>
-    </div>
-
-    <div class="card flex-container date add-hours__component">
-      <form
-        class="date-form"
-        (click)="picker.open()"
-      >
-        <div class="inner-grid">
-          <h2>Date</h2>
-          <h2 *ngIf="dateInputAs$ | async as date">{{ date }}</h2>
+      <div class="card flex-container date add-hours__component">
+        <div class="date-form" (click)="picker.open()">
+          <div class="inner-grid">
+            <h2>Date</h2>
+            <h2 *ngIf="dateInputAs$ | async as date">{{ date }}</h2>
+          </div>
+          <mat-form-field
+            style="visibility: hidden; height: 1px; margin: 0; padding: 0"
+          >
+            <mat-label style="visibility: hidden">Choose a date</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker"
+              style="visibility: hidden"
+              formControlName="date"
+            />
+            <mat-datepicker
+              #picker
+              color="primary"
+              style="visibility: hidden"
+            ></mat-datepicker>
+          </mat-form-field>
         </div>
-        <mat-form-field
-          style="visibility: hidden; height: 1px; margin: 0; padding: 0"
-        >
-          <mat-label style="visibility: hidden">Choose a date</mat-label>
-          <input
-            matInput
-            [matDatepicker]="picker"
-            style="visibility: hidden"
-            [formControl]="dateInput"
-          />
-          <mat-datepicker
-            #picker
-            color="primary"
-            style="visibility: hidden"
-          ></mat-datepicker>
-        </mat-form-field>
-      </form>
-    </div>
+      </div>
 
-    <div class="card flex-container dropdown add-hours__component">
-      <form>
+      <div class="card flex-container dropdown add-hours__component">
         <mat-form-field appearance="fill">
-          <mat-label>Favorite food</mat-label>
-          <mat-select [(ngModel)]="selectedValue" name="food">
-            <mat-option *ngFor="let food of foods" [value]="food.value">
-              {{ food.viewValue }}
+          <mat-label>Worksites</mat-label>
+          <mat-select
+            name="worksite"
+            formControlName="worksite"
+          >
+            <mat-option *ngFor="let ws of worksites" [value]="ws.id">
+              {{ ws.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-      </form>
-    </div>
+      </div>
 
-    <div class="card flex-container dropdown add-hours__component">
-      <form>
+      <div class="card flex-container dropdown add-hours__component">
         <mat-form-field appearance="fill">
-          <mat-label>Favorite Car</mat-label>
-          <mat-select [(ngModel)]="selectedCar" name="car">
-            <mat-option *ngFor="let car of cars" [value]="car.value">
-              {{ car.viewValue }}
+          <mat-label>Worktypes</mat-label>
+          <mat-select
+            name="worktype"
+            formControlName="worktype"
+          >
+            <mat-option *ngFor="let wt of worktypes" [value]="wt.id">
+              {{ wt.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-      </form>
-    </div>
+      </div>
 
-    <div class="card flex-container dropdown add-hours__component">
-      <mat-slider aria-label="unit(s)"></mat-slider>
+      <div class="card flex-container dropdown add-hours__component">
+        <mat-slider
+          formControlName="slider"
+          thumbLabel
+          [displayWith]="formatLabel"
+          tickInterval="60"
+          step="15"
+          min="0"
+          max="960"
+          aria-label="units"
+        ></mat-slider>
+      </div>
+      <div style="display: flex; justify-content: center;">
+        <app-form-button [form]="hoursForm" (buttonClick)="onButtonClick($event)" [text]="'Add New'"></app-form-button>
+      </div>
     </div>
+  </form>
 
-    <div class="card marked-hours-container">
-      <app-marked-hour-info-card></app-marked-hour-info-card>
-      <app-marked-hour-info-card></app-marked-hour-info-card>
-      <app-marked-hour-info-card></app-marked-hour-info-card>
-    </div>
+  <div class="card marked-hours-container">
+    <app-marked-hour-info-card></app-marked-hour-info-card>
+    <app-marked-hour-info-card></app-marked-hour-info-card>
+    <app-marked-hour-info-card></app-marked-hour-info-card>
   </div>
 </main>

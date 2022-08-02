@@ -1,5 +1,4 @@
 export interface Hour {
-    id: string;
     clientId: string;
     createdAt: string;
     createdBy: string;
@@ -11,6 +10,7 @@ export interface Hour {
     worksiteName: string;
     worktypeId: string;
     worktypeName: string;
+    id?: string;
 }
 
 export function createHour(hour: Partial<Hour>) {

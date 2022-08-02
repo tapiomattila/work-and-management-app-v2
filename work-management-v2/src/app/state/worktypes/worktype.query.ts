@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { QueryEntity } from '@datorama/akita';
 import { of } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { Worktype } from './worktype.model';
 import { WorktypeService } from './worktype.service';
 import { WorktypeState, WorktypeStore } from './worktype.store';
@@ -26,6 +26,30 @@ export class WorktypeQuery extends QueryEntity<WorktypeState> {
                 entity => entity.updatedBy === uid,
             ]
         })
+    }
+
+    /**
+     * Select worktype from store by its id
+     * @param id worktype id
+     * @returns Observable<Worktype | null>
+     */
+     selectWorktypeByID(id: string) {
+        return this.selectAll({
+            filterBy: [
+                entity => entity.id === id,
+            ]
+        }).pipe(
+            map(els => els ? els[0] : null)
+        );
+    }
+
+    getWorktypeByID(id: string) {
+        const worktype = this.getAll().filter(el => {
+            const condition1 = el.id === id;
+            return condition1;
+        });
+
+        return worktype.length ? worktype[0] : null;
     }
 
     /**

@@ -51,6 +51,8 @@ export class AppComponent implements OnInit, OnDestroy {
       switchMap(uid => this.hoursQuery.selectFetchOrStore(uid))
     ).subscribe();
 
+    this.hoursQuery.selectAll().subscribe(res => console.log('all hours', res));
+
     const worktypes$ = this.sessionQuery.uid$.pipe(filter(el => el !== '')).pipe(
       switchMap(uid => this.worktypeQuery.selectFetchOrStore(uid))
     ).subscribe(res => console.log('worktype res', res));

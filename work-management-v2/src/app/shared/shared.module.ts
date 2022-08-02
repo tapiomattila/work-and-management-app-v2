@@ -11,6 +11,7 @@ import { MarkedHoursCardComponent } from './marked-hours-card/marked-hours-card.
 import { MarkedHourInfoCardComponent } from './marked-hour-info-card/marked-hour-info-card.component';
 import { GoogleSigninDirective } from '../utils/directives/google-signin.directive';
 import { ChartModule } from '../chart/chart.module';
+import { ButtonFormComponent } from './button-form/button-form.component';
 
 const components = [
   HeaderProfileComponent,
@@ -22,6 +23,7 @@ const components = [
   WorksiteListElementComponent,
   MarkedHoursCardComponent,
   MarkedHourInfoCardComponent,
+  ButtonFormComponent,
   GoogleSigninDirective
 ];
 

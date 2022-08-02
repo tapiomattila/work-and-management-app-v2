@@ -71,9 +71,6 @@ export class WorksiteService {
             })
         )
         return mappedHours$;
-        // return mappedHours$.pipe(
-        //     map(res => res.filter(els => els.marked! > 0))
-        // )
     }
 
     /**
@@ -110,7 +107,7 @@ export class WorksiteService {
             debounceTime(30),
             map(res => {
                 return this.mapSnapToWorksite(res);
-            }));;
+            }));
     }
 
     private mapSnapToWorksite(snaps: QuerySnapshot<DocumentData>) {

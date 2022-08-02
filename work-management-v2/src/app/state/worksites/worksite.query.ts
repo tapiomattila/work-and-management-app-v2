@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { QueryEntity } from '@datorama/akita';
 import { of } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { Worksite } from './worksite.model';
 import { WorksiteService } from './worksite.service';
 import { WorksiteState, WorksiteStore } from './worksite.store';
@@ -36,6 +36,32 @@ export class WorksiteQuery extends QueryEntity<WorksiteState> {
                 entity => entity.deleted !== true
             ]
         })
+    }
+
+    /**
+     * Select worksite from store by its id
+     * @param id worksite id
+     * @returns Observable<Worksite | null>
+     */
+    selectWorksiteByID(id: string) {
+        return this.selectAll({
+            filterBy: [
+                entity => entity.id === id,
+                entity => entity.deleted === false
+            ]
+        }).pipe(
+            map(els => els ? els[0] : null)
+        );
+    }
+
+    getWorksiteByID(id: string) {
+        const worksite = this.getAll().filter(el => {
+            const condition1 = el.id === id;
+            const condition2 = el.deleted === false;
+            return condition1 && condition2;
+        });
+
+        return worksite.length ? worksite[0] : null;
     }
 
     /**

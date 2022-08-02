@@ -1,0 +1,29 @@
+button {
+  margin: 0 auto;
+  min-width: 30rem;
+  height: 5rem;
+  outline: none;
+  border: none;
+  border-radius: 2rem;
+  font-size: var(--font-size-l);
+  font-weight: var(--font-weight-l);
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+
+  transition: 0.3s all;
+
+  &:disabled {
+    color: #777;
+    background-color: #ccc;
+  }
+
+  &:hover {
+    transform: translateY(-0.2rem);
+    box-shadow: var(--box-shadow-button-hover);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
