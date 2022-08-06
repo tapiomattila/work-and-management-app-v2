@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { QueryEntity } from '@datorama/akita';
 import { of } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { mostRecentWorksite } from 'src/app/utils/functions';
 import { Worksite } from './worksite.model';
 import { WorksiteService } from './worksite.service';
 import { WorksiteState, WorksiteStore } from './worksite.store';
@@ -54,6 +55,11 @@ export class WorksiteQuery extends QueryEntity<WorksiteState> {
         );
     }
 
+    /**
+     * Get (syncronous) worksite from store by its id
+     * @param id worksite id
+     * @returns Observable<Worksite | null>
+     */
     getWorksiteByID(id: string) {
         const worksite = this.getAll().filter(el => {
             const condition1 = el.id === id;
@@ -62,6 +68,12 @@ export class WorksiteQuery extends QueryEntity<WorksiteState> {
         });
 
         return worksite.length ? worksite[0] : null;
+    }
+
+    selectMostRecentWorksite() {
+        return this.worksites$.pipe(
+            map(els => mostRecentWorksite(els))
+        )
     }
 
     /**

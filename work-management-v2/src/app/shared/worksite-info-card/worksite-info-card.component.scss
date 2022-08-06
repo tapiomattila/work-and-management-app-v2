@@ -1,5 +1,30 @@
 @import "../../../styles.scss";
 
+:host {
+  position: relative;
+}
+
+img {
+  position: absolute;
+  top: -10px;
+  right: 0;
+  max-width: 40%;
+  transition: 0.5s all;
+
+  &.middlePos {
+    top: 10px;
+  }
+
+  @media only screen and (min-width: $bp-small) {
+    max-width: 45%;
+    top: -15px;
+  }
+
+  @media only screen and (min-width: $bp-medium) {
+    top: -10px;
+  }
+}
+
 .bgBlue {
   background-color: var(--color-secondary);
   color: var(--color-white);
@@ -21,6 +46,7 @@
     grid-column: 1 / -1;
     font-size: var(--font-size-l);
     font-weight: var(--font-weight-l);
+    max-width: 75%;
 
     p {
       margin: 0;
@@ -29,6 +55,7 @@
   }
   &__address {
     grid-column: 1 / -1;
+    max-width: 75%;
     font-size: var(--font-size-m);
     font-weight: var(--font-weight-m);
 

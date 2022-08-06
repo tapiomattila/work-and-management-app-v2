@@ -5,13 +5,15 @@ export interface SessionState {
     uid: string;
     displayName: string;
     email: string;
+    photoUrl: string
 }
 
 export function createInitialState(): SessionState {
     return {
         uid: '',
         displayName: '',
-        email: ''
+        email: '',
+        photoUrl: ''
     };
 }
 

@@ -18,14 +18,15 @@ export class SessionService {
    * @returns void
    */
   updateUID(auth: firebase.default.User | null) {
-    if (!auth?.uid || !auth.displayName || !auth.email) {
+    if (!auth?.uid || !auth.displayName || !auth.email || !auth.photoURL) {
       return;
     }
 
     this.store.update({
       uid: auth.uid,
       displayName: auth.displayName,
-      email: auth.email
+      email: auth.email,
+      photoUrl: auth.photoURL
     });
   }
 

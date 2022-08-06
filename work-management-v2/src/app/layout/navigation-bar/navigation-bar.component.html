@@ -2,9 +2,11 @@
   <div class="sidebar__content">
     <div class="sidebar__content--header" *ngIf="!isHeader">
       <div class="profile-info">
-        <div class="circle"></div>
-        <div class="user">Hello Mary</div>
-        <div class="date">Thu 23 Sep, 2021</div>
+        <div class="circle">
+          <img *ngIf="photoUrl" [src]="photoUrl" alt="profile image">
+        </div>
+        <div class="user">{{ user ? getName : "Please sign in ..." }}</div>
+        <div class="date">{{ date ? date : '' }}</div>
       </div>
     </div>
     <div class="sidebar__content--list">
@@ -12,13 +14,7 @@
         <li routerLink="selected" routerLinkActive="active">
           <div class="list-item">
             <div class="icon">
-              <svg width="31" height="24" viewBox="0 0 31 24" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <rect x="7.8418" y="8.03381" width="15.3163" height="15.7162" fill="#777"
-                  stroke="#F7Fma9FB" stroke-width="0.5" />
-                <path d="M2.74497 11.4256L15.5 0.331337L28.255 11.4256H2.74497Z"
-                  fill="#777" stroke="#F7F9FB" stroke-width="0.5" />
-              </svg>
+              <mat-icon>home</mat-icon>
             </div>
             <span>Home</span>
           </div>
@@ -26,17 +22,7 @@
         <li routerLink="list" routerLinkActive="active">
           <div class="list-item">
             <div class="icon">
-              <svg width="33" height="18" viewBox="0 0 33 18" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <rect x="5" width="28" height="3" fill="#777" />
-                <rect width="3" height="3" fill="#777" />
-                <rect y="5" width="3" height="3" fill="#777" />
-                <rect y="10" width="3" height="3" fill="#777" />
-                <rect y="15" width="3" height="3" fill="#777" />
-                <rect x="5" y="5" width="28" height="3" fill="#777" />
-                <rect x="5" y="10" width="28" height="3" fill="#777" />
-                <rect x="5" y="15" width="28" height="3" fill="#777" />
-              </svg>
+              <mat-icon>list</mat-icon>
             </div>
             <span>List</span>
           </div>
@@ -44,15 +30,7 @@
         <li routerLink="add" routerLinkActive="active">
           <div class="list-item">
             <div class="icon">
-              <svg width="30" height="24" viewBox="0 0 30 24" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <rect x="7" y="5" width="2" height="16" fill="#777" />
-                <rect x="16" y="12" width="2" height="16" transform="rotate(90 16 12)"
-                  fill="#777" />
-                <path
-                  d="M19.8203 4V22H17.6523V4H19.8203ZM19.3047 15.1797L18.4023 15.1445C18.4102 14.2773 18.5391 13.4766 18.7891 12.7422C19.0391 12 19.3906 11.3555 19.8438 10.8086C20.2969 10.2617 20.8359 9.83984 21.4609 9.54297C22.0938 9.23828 22.793 9.08594 23.5586 9.08594C24.1836 9.08594 24.7461 9.17188 25.2461 9.34375C25.7461 9.50781 26.1719 9.77344 26.5234 10.1406C26.8828 10.5078 27.1562 10.9844 27.3438 11.5703C27.5312 12.1484 27.625 12.8555 27.625 13.6914V22H25.4453V13.668C25.4453 13.0039 25.3477 12.4727 25.1523 12.0742C24.957 11.668 24.6719 11.375 24.2969 11.1953C23.9219 11.0078 23.4609 10.9141 22.9141 10.9141C22.375 10.9141 21.8828 11.0273 21.4375 11.2539C21 11.4805 20.6211 11.793 20.3008 12.1914C19.9883 12.5898 19.7422 13.0469 19.5625 13.5625C19.3906 14.0703 19.3047 14.6094 19.3047 15.1797Z"
-                  fill="#777" />
-              </svg>
+              <mat-icon>add_circle</mat-icon>
             </div>
             <span>Add Hours</span>
           </div>
@@ -60,23 +38,7 @@
         <li routerLink="hours-list" routerLinkActive="active">
           <div class="list-item">
             <div class="icon">
-              <svg width="34" height="23" viewBox="0 0 34 23" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M3.82031 4V22H1.65234V4H3.82031ZM3.30469 15.1797L2.40234 15.1445C2.41016 14.2773 2.53906 13.4766 2.78906 12.7422C3.03906 12 3.39062 11.3555 3.84375 10.8086C4.29688 10.2617 4.83594 9.83984 5.46094 9.54297C6.09375 9.23828 6.79297 9.08594 7.55859 9.08594C8.18359 9.08594 8.74609 9.17188 9.24609 9.34375C9.74609 9.50781 10.1719 9.77344 10.5234 10.1406C10.8828 10.5078 11.1562 10.9844 11.3438 11.5703C11.5312 12.1484 11.625 12.8555 11.625 13.6914V22H9.44531V13.668C9.44531 13.0039 9.34766 12.4727 9.15234 12.0742C8.95703 11.668 8.67188 11.375 8.29688 11.1953C7.92188 11.0078 7.46094 10.9141 6.91406 10.9141C6.375 10.9141 5.88281 11.0273 5.4375 11.2539C5 11.4805 4.62109 11.793 4.30078 12.1914C3.98828 12.5898 3.74219 13.0469 3.5625 13.5625C3.39062 14.0703 3.30469 14.6094 3.30469 15.1797Z"
-                  fill="#777" />
-                <rect x="17.8788" y="5" width="16.1212" height="2.83333" fill="#777" />
-                <rect x="15" y="5" width="1.72727" height="2.83333" fill="#777" />
-                <rect x="15" y="9.72217" width="1.72727" height="2.83333" fill="#777" />
-                <rect x="15" y="14.4445" width="1.72727" height="2.83333" fill="#777" />
-                <rect x="15" y="19.1666" width="1.72727" height="2.83333" fill="#777" />
-                <rect x="17.8788" y="9.72217" width="16.1212" height="2.83333"
-                  fill="#777" />
-                <rect x="17.8788" y="14.4445" width="16.1212" height="2.83333"
-                  fill="#777" />
-                <rect x="17.8788" y="19.1666" width="16.1212" height="2.83333"
-                  fill="#777" />
-              </svg>
+              <mat-icon> list_alt</mat-icon>
             </div>
             <span>Hours List</span>
           </div>
@@ -84,14 +46,7 @@
         <li>
           <div class="list-item">
             <div class="icon">
-              <svg width="24" height="20" viewBox="0 0 24 20" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <rect y="7" width="4" height="13" fill="#777" />
-                <rect x="5" y="13" width="4" height="7" fill="#777" />
-                <rect x="10" y="4" width="4" height="16" fill="#777" />
-                <rect x="15" width="4" height="20" fill="#777" />
-                <rect x="20" y="6" width="4" height="14" fill="#777" />
-              </svg>
+              <mat-icon>assessment</mat-icon>
             </div>
             <span>Statistics</span>
           </div>

@@ -1,12 +1,15 @@
 <main>
   <app-header [title]="'Add Hours'"></app-header>
   <div class="flex-container">
-    <app-worksite-info-card
-      [title]="'Pirkkala Citymarket'"
-      [address]="'Palmrothintie 2, 33950 Pirkkala'"
-      [bgBlue]="true"
-    >
-    </app-worksite-info-card>
+    <ng-container *ngIf="currentWorksite$ | async as ws">
+      <app-worksite-info-card
+        [title]="ws.name"
+        [address]="getWorksiteInfo(ws)"
+        [bgBlue]="true"
+        [imgPos]="true"
+      >
+      </app-worksite-info-card>
+    </ng-container>
   </div>
   <form [formGroup]="hoursForm">
     <div class="add-hours__container">
@@ -43,10 +46,7 @@
       <div class="card flex-container dropdown add-hours__component">
         <mat-form-field appearance="fill">
           <mat-label>Worksites</mat-label>
-          <mat-select
-            name="worksite"
-            formControlName="worksite"
-          >
+          <mat-select name="worksite" formControlName="worksite">
             <mat-option *ngFor="let ws of worksites" [value]="ws.id">
               {{ ws.name }}
             </mat-option>
@@ -57,10 +57,7 @@
       <div class="card flex-container dropdown add-hours__component">
         <mat-form-field appearance="fill">
           <mat-label>Worktypes</mat-label>
-          <mat-select
-            name="worktype"
-            formControlName="worktype"
-          >
+          <mat-select name="worktype" formControlName="worktype">
             <mat-option *ngFor="let wt of worktypes" [value]="wt.id">
               {{ wt.name }}
             </mat-option>
@@ -80,8 +77,12 @@
           aria-label="units"
         ></mat-slider>
       </div>
-      <div style="display: flex; justify-content: center;">
-        <app-form-button [form]="hoursForm" (buttonClick)="onButtonClick($event)" [text]="'Add New'"></app-form-button>
+      <div style="display: flex; justify-content: center">
+        <app-form-button
+          [form]="hoursForm"
+          (buttonClick)="onButtonClick($event)"
+          [text]="'Add New'"
+        ></app-form-button>
       </div>
     </div>
   </form>

@@ -1,16 +1,22 @@
 <div class="container">
   <header class="header" *ngIf="bpService.isHeader">
     <app-header-profile
-      [name]="'Mary'"
-      [date]="'Thu 23 Sep, 2021'"
+      [name]="user$ | async"
+      [date]="getDate()"
+      [photoUrl]="photo$ | async"
       appGoogleSignin
     ></app-header-profile>
-    <div style="display: flex">
+    <!-- <div style="display: flex">
       <button (click)="signout()">Signout</button>
-    </div>
+    </div> -->
   </header>
   <div class="content">
-    <app-navigation-bar [isHeader]="bpService.isHeader"></app-navigation-bar>
+    <app-navigation-bar
+      [isHeader]="bpService.isHeader"
+      [user]="user$ | async"
+      [photoUrl]="photo$ | async"
+      [date]="getDate()"
+    ></app-navigation-bar>
     <main class="main">
       <router-outlet></router-outlet>
     </main>

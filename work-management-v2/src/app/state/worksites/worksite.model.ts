@@ -7,7 +7,7 @@ export interface Worksite {
     updatedAt: string;
     updatedBy: string;
     deleted: boolean;
-    locationInfo: Address;
+    info: Address;
     users: string[];
     marked?: number
 }
@@ -15,7 +15,7 @@ export interface Worksite {
 interface Address {
     city: string;
     postalCode: string;
-    street: string;
+    streetAddress: string;
 }
 
 export function createWorksite(worksite: Partial<Worksite>) {

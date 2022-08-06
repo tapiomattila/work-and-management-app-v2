@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { BarChartComponent } from './chart/bar-chart/bar-chart.component';
 import { AddHoursPageComponent } from './pages/add-hours-page/add-hours-page.component';
 import { HoursListPageComponent } from './pages/hours-list-page/hours-list-page.component';
 import { SelectedWorksiteComponent } from './pages/selected-worksite/selected-worksite.component';
@@ -11,6 +10,8 @@ const routes: Routes = [
   { path: 'selected', component: SelectedWorksiteComponent },
   { path: 'list', component: WorksiteListComponent },
   { path: 'add', component: AddHoursPageComponent },
+  { path: 'add/:worksiteId', component: AddHoursPageComponent },
+  { path: 'add/:worksiteId/:hourId', component: AddHoursPageComponent },
   { path: 'hours-list', component: HoursListPageComponent },
   { path: '**', redirectTo: '/selected' },
 ];

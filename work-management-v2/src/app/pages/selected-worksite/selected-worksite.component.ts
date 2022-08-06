@@ -20,7 +20,7 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
   minutesInHour = 60;
 
   totalForDay$: Observable<number | undefined> | undefined;
-  mostRecentWorksite$: Observable<Worksite | undefined> | undefined;
+  mostRecentWorksite$: Observable<Worksite | null> | undefined;
 
   constructor(
     private worksiteQuery: WorksiteQuery,

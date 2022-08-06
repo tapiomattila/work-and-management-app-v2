@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Observable } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { Hour } from 'src/app/state/hours/hour.model';
@@ -21,7 +22,8 @@ export class WorksiteListComponent implements OnInit {
     private hoursQuery: HourQuery,
     private worksiteQuery: WorksiteQuery,
     private worksiteService: WorksiteService,
-    private sessionQuery: SessionQuery
+    private sessionQuery: SessionQuery,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -50,5 +52,10 @@ export class WorksiteListComponent implements OnInit {
       }),
       switchMap(ws => this.worksiteService.mapHoursToWorksites(ws, hours$))
     );
+  }
+
+  select(ws: Partial<Worksite>) {
+    console.log('show ws: ', ws.id);
+    this.router.navigate(['add', ws.id]);
   }
 }

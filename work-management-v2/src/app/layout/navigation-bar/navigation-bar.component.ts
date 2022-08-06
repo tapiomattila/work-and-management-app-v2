@@ -8,7 +8,10 @@ import { Router } from '@angular/router';
 })
 export class NavigationBarComponent implements OnInit {
 
+  @Input() date: string | null = '';
+  @Input() user: string | null = '';
   @Input() isHeader = false;
+  @Input() photoUrl: string | null = '';
 
   constructor(
     private router: Router
@@ -19,6 +22,10 @@ export class NavigationBarComponent implements OnInit {
 
   onNavigate(url: string) {
     this.router.navigate([url]);
+  }
+
+  get getName() {
+    return `Hello ${this.user}`;
   }
 
 }

@@ -6,8 +6,9 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./header-profile.component.scss'],
 })
 export class HeaderProfileComponent implements OnInit {
-  @Input() name: string | undefined;
+  @Input() name: string | null = '';
   @Input() date: string | undefined;
+  @Input() photoUrl: string | null = '';
 
   constructor() {}
 

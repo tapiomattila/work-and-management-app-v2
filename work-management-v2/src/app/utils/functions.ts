@@ -27,8 +27,9 @@ export function mostRecentWorksite(worksites: Worksite[]) {
     if (el.millis > max.millis) {
       max = el;
     }
-  });;
-  return worksites.find(el => el.id === max.id);
+  });
+  const found = worksites.find(el => el.id === max.id);
+  return found ? found : null;
 }
 
 /**

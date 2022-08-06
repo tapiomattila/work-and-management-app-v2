@@ -1,9 +1,9 @@
+<img [ngClass]="{ 'middlePos': imgPos }" src="../../../assets/svg/illustration_1.svg" alt="info-illustration-image">
 <div class="sec worksite-info card" [ngClass]="{ bgBlue: bgBlue }">
   <div class="worksite-info__name">
     <p>{{ title ? title : "no title" }}</p>
   </div>
   <div class="worksite-info__address">
-    <!-- <p>{{ address ? address : "no address" }}</p> -->
     <p *ngIf="address">{{ address }}</p>
   </div>
 

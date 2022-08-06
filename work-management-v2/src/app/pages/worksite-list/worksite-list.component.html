@@ -6,6 +6,7 @@
         *ngFor="let worksite of ws"
         [name]="worksite?.name"
         [minutes]="worksite?.marked"
+        (click)="select(worksite)"
       ></app-worksite-list-element>
     </ng-container>
   </div>
