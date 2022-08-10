@@ -114,6 +114,10 @@ form {
   width: 100%;
   height: 100%;
   cursor: pointer;
+
+  &__selected-date {
+    font-size: var(--font-size-regular);
+  }
 }
 
 mat-form-field {

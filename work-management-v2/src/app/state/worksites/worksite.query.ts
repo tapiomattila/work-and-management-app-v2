@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { QueryEntity } from '@datorama/akita';
 import { of } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
-import { mostRecentWorksite } from 'src/app/utils/functions';
+import { debounceTime, map, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { mostRecentWorksiteByUpdate } from 'src/app/utils/functions';
 import { Worksite } from './worksite.model';
 import { WorksiteService } from './worksite.service';
 import { WorksiteState, WorksiteStore } from './worksite.store';
@@ -11,7 +11,7 @@ import { WorksiteState, WorksiteStore } from './worksite.store';
 export class WorksiteQuery extends QueryEntity<WorksiteState> {
 
     worksites$ = this.selectAll({
-        filterBy: entity => entity.deleted !== true
+        filterBy: entity => entity.deleted === false
     });
 
     showRemoved$ = this.selectAll({
@@ -34,7 +34,7 @@ export class WorksiteQuery extends QueryEntity<WorksiteState> {
         return this.selectAll({
             filterBy: [
                 entity => entity.users.includes(uid),
-                entity => entity.deleted !== true
+                entity => entity.deleted === false
             ]
         })
     }
@@ -72,7 +72,7 @@ export class WorksiteQuery extends QueryEntity<WorksiteState> {
 
     selectMostRecentWorksite() {
         return this.worksites$.pipe(
-            map(els => mostRecentWorksite(els))
+            map(els => mostRecentWorksiteByUpdate(els))
         )
     }
 
@@ -92,6 +92,8 @@ export class WorksiteQuery extends QueryEntity<WorksiteState> {
                     tap(res => this.worksiteService.setWorksites(res))
                 )
             }),
+            debounceTime(300),
+            shareReplay(),
         )
     }
 }

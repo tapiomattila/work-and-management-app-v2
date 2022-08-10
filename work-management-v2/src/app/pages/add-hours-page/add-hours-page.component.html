@@ -22,7 +22,7 @@
         <div class="date-form" (click)="picker.open()">
           <div class="inner-grid">
             <h2>Date</h2>
-            <h2 *ngIf="dateInputAs$ | async as date">{{ date }}</h2>
+            <h2 *ngIf="dateInputAs$ | async as date" class="date-form__selected-date">{{ date }}</h2>
           </div>
           <mat-form-field
             style="visibility: hidden; height: 1px; margin: 0; padding: 0"

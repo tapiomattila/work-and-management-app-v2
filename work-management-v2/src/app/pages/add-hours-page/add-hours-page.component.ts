@@ -5,13 +5,13 @@ import * as moment from 'moment';
 import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { Hour } from 'src/app/state/hours/hour.model';
+import { HourQuery } from 'src/app/state/hours/hour.query';
 import { HourService } from 'src/app/state/hours/hour.service';
 import { SessionQuery } from 'src/app/state/session/session.query';
 import { Worksite } from 'src/app/state/worksites/worksite.model';
 import { WorksiteQuery } from 'src/app/state/worksites/worksite.query';
 import { Worktype } from 'src/app/state/worktypes/worktype.model';
 import { WorktypeQuery } from 'src/app/state/worktypes/worktype.query';
-import { mostRecentWorksite } from 'src/app/utils/functions';
 
 @Component({
   selector: 'app-add-hours-page',
@@ -40,6 +40,7 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private worksiteQuery: WorksiteQuery,
     private worktypeQuery: WorktypeQuery,
+    private hourQuery: HourQuery,
     private sessionQuery: SessionQuery,
     private hourService: HourService,
     private route: ActivatedRoute
@@ -57,9 +58,7 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
         if (res) {
           return of(null);
         }
-        return this.worksiteQuery.worksites$.pipe(
-          map(els => mostRecentWorksite(els))
-        )
+        return this.hourQuery.selectMostRecentHourWorksite(this.worksiteQuery.worksites$)
       })
     );
 

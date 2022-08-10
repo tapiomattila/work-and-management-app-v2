@@ -42,9 +42,9 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     this.observerSub.push(break800$);
 
-    const session$ = this.sessionService.setAuthState().subscribe(res => console.log('show res', res));
+    const session$ = this.sessionService.setAuthState().subscribe();
 
-    const ws$ = this.sessionQuery.uid$.pipe(
+    const worksites$ = this.sessionQuery.uid$.pipe(
       switchMap(uid => of(uid)),
       switchMap(uid => {
         return uid ? this.worksiteQuery.selectFetchOrStore(uid) : of([]);
@@ -52,14 +52,12 @@ export class AppComponent implements OnInit, OnDestroy {
     ).subscribe()
 
     const hours$ = this.sessionQuery.uid$.pipe(filter(el => el !== '')).pipe(
-      switchMap(uid => this.hoursQuery.selectFetchOrStore(uid))
+      switchMap(uid => uid ? this.hoursQuery.selectFetchOrStore(uid) : of([]))
     ).subscribe();
-
-    this.hoursQuery.selectAll().subscribe(res => console.log('all hours', res));
 
     const worktypes$ = this.sessionQuery.uid$.pipe(filter(el => el !== '')).pipe(
       switchMap(uid => this.worktypeQuery.selectFetchOrStore(uid))
-    ).subscribe(res => console.log('worktype res', res));
+    ).subscribe();
 
     this.user$ = this.sessionQuery.allState$.pipe(
       map(el => el.displayName),
@@ -71,7 +69,7 @@ export class AppComponent implements OnInit, OnDestroy {
     )
 
     this.subs.push(session$);
-    this.subs.push(ws$);
+    this.subs.push(worksites$);
     this.subs.push(hours$);
     this.subs.push(worktypes$);
   }

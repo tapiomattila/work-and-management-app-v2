@@ -1,6 +1,11 @@
 import { Hour } from "../state/hours/hour.model";
 import { Worksite } from "../state/worksites/worksite.model";
 
+/**
+ * 
+ * @param value Number
+ * @returns
+ */
 export function convertToHoursAndMinutes(value: number) {
   let decimals = value / 60 - Math.floor(value / 60);
   const minutes = decimals * 60;
@@ -12,24 +17,26 @@ export function convertToHoursAndMinutes(value: number) {
   };
 }
 
-export function mostRecentWorksite(worksites: Worksite[]) {
-  const millisArr: { id: string, millis: number }[] = [];
-  worksites.forEach(el => {
-    const millis = new Date(el.updatedAt).valueOf();
-    millisArr.push({
-      id: el.id,
-      millis
-    });
-  });
+/**
+ * 
+ * @param hours 
+ * @returns 
+ */
+export function mostRecentWorksiteByHour(hours: Hour[]) {
+  return hours.reduce((a, b) => {
+    return new Date(a.updatedAt) > new Date(b.updatedAt) ? a : b;
+  }, {} as Hour);
+}
 
-  let max: { id: string, millis: number } = { id: '', millis: 0 };
-  millisArr.forEach(el => {
-    if (el.millis > max.millis) {
-      max = el;
-    }
-  });
-  const found = worksites.find(el => el.id === max.id);
-  return found ? found : null;
+/**
+ * 
+ * @param worksites 
+ * @returns 
+ */
+export function mostRecentWorksiteByUpdate(worksites: Worksite[]) {
+  return worksites.reduce((a, b) => {
+    return new Date(a.updatedAt) > new Date(b.updatedAt) ? a : b;
+  }, {} as Worksite)
 }
 
 /**
@@ -57,7 +64,7 @@ export function compareToCurrentDate(inputDate: string) {
 }
 
 /**
- * reduce input hours Hour[] marked values (hours) to single minutes value
+ * Reduce input hours Hour[] marked values (hours) to single minutes value
  * @param hours Hour[]
  * @returns minutes, Number
  */

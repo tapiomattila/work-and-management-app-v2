@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { QueryEntity } from '@datorama/akita';
-import { of } from 'rxjs';
-import { distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { debounceTime, map, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { compareToCurrentDate, hoursReduce, mostRecentWorksiteByHour } from 'src/app/utils/functions';
+import { Worksite } from '../worksites/worksite.model';
 import { Hour } from './hour.model';
 import { HourService } from './hour.service';
 import { HourState, HourStore } from './hour.store';
@@ -48,11 +50,11 @@ export class HourQuery extends QueryEntity<HourState> {
      * @returns Observable<Worksite[]>
      */
     selectHoursByWorksite(id: string) {
-        return this.selectAll().pipe(
-            map(els => els.filter(el => {
-                return el.worksiteId === id
-            })),
-        )
+        return this.selectAll({
+            filterBy: [
+                entity => entity.worksiteId === id
+            ]
+        })
     }
 
     /**
@@ -61,15 +63,17 @@ export class HourQuery extends QueryEntity<HourState> {
      * @returns Observable<number>
      */
     selectCurrentDayHoursByWorksite(id: string) {
-        return this.selectAll().pipe(
+        return this.selectAll({
+            filterBy: [
+                entity => entity.worksiteId === id,
+            ]
+        }).pipe(
             map(elements => {
-                return elements
-                    // .filter(el => compareToCurrentDate(el.updatedAt.toString())
-                    .filter(el => el.worksiteId === id
-                    ).map(el => el.marked || 0
-                    ).reduce((prev, cur) => prev + cur, 0)
+                return elements.filter(el => compareToCurrentDate(el.updatedAt.toString()))
+                    .map(el => el.marked || 0)
+                    .reduce((prev, cur) => prev + cur, 0)
             }),
-            map(total => total * 60)
+            map(hour => hour * 60)
         );
     }
 
@@ -85,11 +89,76 @@ export class HourQuery extends QueryEntity<HourState> {
         }
         return this.selectHoursByUID(uid).pipe(
             switchMap((hours: Hour[]) => {
-                return hours.length ? of(hours) : this.hourService.fetchHoursByUID(uid).pipe(
-                    tap(res => this.hourService.setHours(res))
+                return hours.length > 0 ? of(hours) : this.hourService.fetchHoursByUID(uid).pipe(
+                    debounceTime(500),
+                    tap(hours => {
+                        if (hours.length > 0) {
+                            this.hourService.setHours(hours);
+                        }
+                    }),
+                    debounceTime(300),
+                    shareReplay()
                 )
             }),
         )
+    }
+
+    /**
+     * Select most recent worksite by hours added
+     * @param worksites$ Observable<Worksite[]>
+     * @returns Observable<Worksite | null>
+     */
+    selectMostRecentHourWorksite(worksites$: Observable<Worksite[]>) {
+        return this.selectAll().pipe(
+            map((hours: Hour[]) => mostRecentWorksiteByHour(hours)),
+            switchMap((hour: Hour) => {
+                if (!hour) return [];
+
+                return worksites$.pipe(
+                    map(els => {
+                        return els.filter(el => el.id === hour.worksiteId);
+                    }),
+                    map(ws => ws ? ws[0] : null)
+                )
+            }),
+        )
+    }
+
+    /**
+     * Select total hours for selected worksite observable
+     * @param worksite$ Observable<Worksite[]>
+     * @returns Observable<number | undefined>
+     */
+    totalHours(worksite$: Observable<Worksite | null>) {
+        return worksite$.pipe(
+            switchMap(res => {
+                if (!res) return of(res);
+
+                return this.selectAll({
+                    filterBy: [
+                        entity => entity.worksiteId === res.id
+                    ]
+                });
+            }),
+            map(hours => {
+                if (!hours) return;
+                return hoursReduce(hours);
+            })
+        );
+    }
+
+    /**
+     * Select total hours for current day for selected worksite observable
+     * @param worksite$ Observable<Worksite | null>
+     * @returns Observable<number | undefined>
+     */
+    totalHoursForDay(worksite$: Observable<Worksite | null>) {
+        return worksite$.pipe(
+            switchMap(ws => {
+                if (!ws) return of(undefined);
+                return this.selectCurrentDayHoursByWorksite(ws.id);
+            })
+        );
     }
 
     /**
@@ -101,26 +170,4 @@ export class HourQuery extends QueryEntity<HourState> {
     filterHoursByWorksite(hours: Hour[], worksiteID: string) {
         return hours.filter(els => els.worksiteId === worksiteID);
     }
-
-    /**
-    * Select Hour[] data observable either from store if present or fetch data from database.
-    * Side-effect: push data to store if fetch is used (no initial data in store)
-    * @returns Observable Hour[] 
-    */
-    private hoursByUIDFetchOrStore(uid: string) {
-        if (!uid) {
-            return of([]);
-        }
-        return this.selectHoursByUID(uid).pipe(
-            distinctUntilChanged(),
-            switchMap((hours: Hour[]) => {
-                if (hours.length > 0) {
-                    return of(hours);
-                }
-                return this.hourService.fetchHoursByUID(uid).pipe(
-                    tap(res => this.hourService.setHours(res)))
-            })
-        )
-    }
-
 }

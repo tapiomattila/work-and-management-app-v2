@@ -1,11 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { of, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { shareReplay } from 'rxjs/operators';
 import { HourQuery } from 'src/app/state/hours/hour.query';
 import { Worksite } from 'src/app/state/worksites/worksite.model';
 import { WorksiteQuery } from 'src/app/state/worksites/worksite.query';
-import { hoursReduce, mostRecentWorksite } from 'src/app/utils/functions';
 
 @Component({
   selector: 'app-selected-worksite',
@@ -17,8 +16,6 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
   worksitesSubs: Subscription | undefined;
 
   total$: Observable<number | undefined> | undefined;
-  minutesInHour = 60;
-
   totalForDay$: Observable<number | undefined> | undefined;
   mostRecentWorksite$: Observable<Worksite | null> | undefined;
 
@@ -28,27 +25,19 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.mostRecentWorksite$ = this.worksiteQuery.worksites$.pipe(
-      map(res => mostRecentWorksite(res))
-    )
-
-    // total hours for worksite
-    this.total$ = this.mostRecentWorksite$.pipe(
-      switchMap(ws => {
-        return ws ? this.hoursQuery.selectHoursByWorksite(ws.id) : [];
-      }),
-      map(hours => {
-        return hoursReduce(hours);
-      })
-    )
-
-    // // total hours for current day
-    this.totalForDay$ = this.mostRecentWorksite$.pipe(
-      switchMap(ws => {
-        if (!ws) return of(undefined);
-        return this.hoursQuery.selectCurrentDayHoursByWorksite(ws.id);
-      }),
+    this.mostRecentWorksite$ = this.mostRecentWorksite().pipe(
+      shareReplay()
     );
+    this.total$ = this.hoursQuery.totalHours(this.mostRecentWorksite$);
+    this.totalForDay$ = this.hoursQuery.totalHoursForDay(this.mostRecentWorksite$);
+  }
+
+  /**
+   * Query for most recent worksite by hours added.
+   * @returns Obsevable<Worksite | null>
+   */
+  mostRecentWorksite() {
+    return this.hoursQuery.selectMostRecentHourWorksite(this.worksiteQuery.worksites$);
   }
 
   ngOnDestroy(): void {
