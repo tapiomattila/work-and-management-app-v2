@@ -9,13 +9,13 @@
   --box-shadow-main: 0 2px 4px 0 rgba(165, 165, 165, 0.25);
   --box-shadow-card: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
 
-  --box-shadow-button-hover: 2px 2px 8px rgba(0,0,0,.3);
-  --box-shadow-button-active: 2px 2px 4px rgba(0,0,0,.2);
+  --box-shadow-button-hover: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  --box-shadow-button-active: 2px 2px 4px rgba(0, 0, 0, 0.2);
 
   --bottom-nav-height: 7rem;
 
   --header-height: 5rem;
-  --global-transition-time: .5s;
+  --global-transition-time: 0.5s;
 
   --info-card-max-width: 50rem;
 
@@ -60,8 +60,7 @@
   --color-tertiarry: #776bea;
   --color-tertiarry-light: #bfdff4;
   --color-non-active: #bcbcbc;
-  --color-icon-accent: #858AAA;
-
+  --color-icon-accent: #858aaa;
 
   // text
   --text-dark: #454858;
@@ -113,6 +112,16 @@ body {
   color: var(--text-dark);
   box-shadow: var(--box-shadow-card);
   padding: var(--size-m) var(--size-l);
+}
+
+.start {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.end {
+  display: flex;
+  justify-content: flex-end;
 }
 
 @mixin flexCenter {

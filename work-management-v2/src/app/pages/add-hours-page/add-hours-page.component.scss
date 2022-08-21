@@ -46,7 +46,7 @@ app-worksite-info-card {
 
 .added-hours {
   display: grid;
-  justify-content: start;
+  justify-content: flex-start;
 
   min-height: var(--min-height-l);
 }

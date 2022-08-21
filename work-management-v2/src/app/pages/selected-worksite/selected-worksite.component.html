@@ -5,6 +5,36 @@
       [bgBlue]="true"
     ></app-worksite-info-card>
   </ng-container>
+</div>
+
+<div class="sec small-cards">
+  <ng-container *ngIf="total$ | async as total; else nocard1">
+    <app-small-card
+      [end]="true"
+      [title]="'Total hours'"
+      [value]="total"
+    ></app-small-card>
+  </ng-container>
+
+  <ng-container *ngIf="totalForDay$ | async as currentDay; else nocard2">
+    <app-small-card
+      [start]="true"
+      [title]="'Current day'"
+      [value]="currentDay"
+    ></app-small-card>
+  </ng-container>
+</div>
+
+<ng-container *ngIf="hours$ | async as hours">
+  <app-hours-chart
+    [label]="'Weekly hours'"
+    [hoursArray]="hours"
+    [labelArray]="labelArray"
+  ></app-hours-chart>
+</ng-container>
+
+<!-- loading tempalates -->
+<div class="flex-container">
   <ng-template #noInfo>
     <div class="card info-card">
       <h2>loading info</h2>
@@ -13,30 +43,19 @@
 </div>
 
 <div class="sec small-cards">
-  <ng-container *ngIf="total$ | async as total; else nocard1">
-    <app-small-card
-      style="justify-content: end"
-      [title]="'Total hours'"
-      [value]="total"
-    ></app-small-card>
-  </ng-container>
   <ng-template #nocard1>
-    <div class="card">
-      <h2>loading card 1</h2>
+    <div class="end">
+      <div class="card">
+        <h2>loading card 1</h2>
+      </div>
     </div>
   </ng-template>
 
-  <ng-container *ngIf="totalForDay$ | async as currentDay; else nocard2">
-    <app-small-card
-      style="justify-content: start"
-      [title]="'Current day'"
-      [value]="currentDay"
-    ></app-small-card>
-  </ng-container>
   <ng-template #nocard2>
-    <div class="card">
-      <h2>loading card 2</h2>
+    <div class="start">
+      <div class="card">
+        <h2>loading card 2</h2>
+      </div>
     </div>
   </ng-template>
 </div>
-<app-hours-chart></app-hours-chart>

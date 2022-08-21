@@ -1,3 +1,9 @@
+export interface ChartHour {
+    num: number;
+    day: string;
+    hours: number;
+}
+
 export interface Hour {
     clientId: string;
     createdAt: string;

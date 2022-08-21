@@ -10,6 +10,8 @@ export class SmallCardComponent implements OnInit {
   getValue: string | undefined;
 
   @Input() title: string | undefined;
+  @Input() end: boolean = false;
+  @Input() start: boolean = false;
   @Input()
   set value(value: number) {
     const hours = value / 60;

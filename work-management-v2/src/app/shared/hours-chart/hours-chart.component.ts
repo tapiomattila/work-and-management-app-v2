@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ChartHour } from 'src/app/state/hours/hour.model';
 
 @Component({
   selector: 'app-hours-chart',
@@ -7,13 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HoursChartComponent implements OnInit {
 
-  label = 'Weekly hours';
-  labelArr = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  dataArr = [9, 4, 13, 10, 6, 6, 8];
+  @Input() label = '';
+  @Input() hoursArray: ChartHour[] = [];
+  @Input() labelArray: string[] = [];
 
   constructor() { }
 
-  ngOnInit(): void {
-    this.label = 'Weekly hours';
-  }
+  ngOnInit(): void { }
 }

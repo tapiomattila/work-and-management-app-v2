@@ -1,6 +1,23 @@
+@import "../../../styles.scss";
+
 :host {
-  width: 100%;
+  // width: 100%;
+  // display: flex;
+}
+
+.test {
   display: flex;
+  justify-content: flex-end;
+}
+
+.start {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.end {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .grid {
@@ -23,7 +40,20 @@
 }
 
 .card {
-  aspect-ratio: 16 / 9;
-  max-height: 14rem;
+  // aspect-ratio: 16 / 9;
+  // max-height: 14rem;
+  // max-width: 24rem;
+
+  width: 100%;
+
   max-width: 24rem;
+
+  // height: 90%;
+  // width: 90%;
+
+  height: 14rem;
+
+  @media only screen and (min-width: $bp-medium) {
+    aspect-ratio: 16 / 9;
+  }
 }

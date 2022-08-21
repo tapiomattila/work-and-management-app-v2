@@ -37,28 +37,59 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+
+    /**
+     * setBreakpointsForHeader();
+     * setSession();
+     * setWorksites();
+     * setUserHours();
+     * setUserWorktypes();
+     * setUserProfile();
+     */
+
+    this.setBreakpointsForHeader();
+    this.setSession();
+    this.setUserHours();
+
+    // this.subs.push(session$);
+    // this.subs.push(worksites$);
+    // this.subs.push(hours$);
+    // this.subs.push(worktypes$);
+  }
+
+  setBreakpointsForHeader() {
     const break800$ = this.bpService.observeBreakpoint().subscribe((state: BreakpointState) => {
       state.matches && !this.bpService.over1200 ? this.bpService.isHeader = false : this.bpService.isHeader = true;
     });
     this.observerSub.push(break800$);
-
+  }
+  setSession() {
     const session$ = this.sessionService.setAuthState().subscribe();
-
+    this.subs.push(session$);
+  }
+  setWorksites() {
     const worksites$ = this.sessionQuery.uid$.pipe(
       switchMap(uid => of(uid)),
       switchMap(uid => {
         return uid ? this.worksiteQuery.selectFetchOrStore(uid) : of([]);
       })
     ).subscribe()
-
+    this.subs.push(worksites$);
+  }
+  setUserHours() {
     const hours$ = this.sessionQuery.uid$.pipe(filter(el => el !== '')).pipe(
       switchMap(uid => uid ? this.hoursQuery.selectFetchOrStore(uid) : of([]))
     ).subscribe();
+    this.subs.push(hours$);
+  }
+  setUserWorktypes() {
 
     const worktypes$ = this.sessionQuery.uid$.pipe(filter(el => el !== '')).pipe(
       switchMap(uid => this.worktypeQuery.selectFetchOrStore(uid))
     ).subscribe();
-
+    this.subs.push(worktypes$);
+  }
+  setUserProfile() {
     this.user$ = this.sessionQuery.allState$.pipe(
       map(el => el.displayName),
       map(name => name ? name.split(' ')[0] : '')
@@ -68,10 +99,6 @@ export class AppComponent implements OnInit, OnDestroy {
       map(el => el.photoUrl),
     )
 
-    this.subs.push(session$);
-    this.subs.push(worksites$);
-    this.subs.push(hours$);
-    this.subs.push(worktypes$);
   }
 
   getDate() {

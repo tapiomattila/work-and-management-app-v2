@@ -1,8 +1,10 @@
-<div class="card grid">
-  <p class="small-cards__total-hours--title">
-    {{ title ? getTitle : "no title" }}
-  </p>
-  <p class="small-cards__total-hours--value">
-    {{ getValue ? getValue : "no value" }}
-  </p>
+<div class="test" [ngClass]="{ start: start, end: end }">
+  <div class="card grid">
+    <p class="small-cards__total-hours--title">
+      {{ title ? getTitle : "no title" }}
+    </p>
+    <p class="small-cards__total-hours--value">
+      {{ getValue ? getValue : "no value" }}
+    </p>
+  </div>
 </div>

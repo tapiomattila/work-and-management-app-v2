@@ -1,10 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs';
-import { shareReplay } from 'rxjs/operators';
+import * as moment from 'moment';
+import { filter, map, shareReplay } from 'rxjs/operators';
 import { HourQuery } from 'src/app/state/hours/hour.query';
 import { Worksite } from 'src/app/state/worksites/worksite.model';
 import { WorksiteQuery } from 'src/app/state/worksites/worksite.query';
+import { ChartHour, Hour } from 'src/app/state/hours/hour.model';
+
+interface Indexed {
+  [prop: number]: ChartHour
+}
 
 @Component({
   selector: 'app-selected-worksite',
@@ -13,8 +19,12 @@ import { WorksiteQuery } from 'src/app/state/worksites/worksite.query';
 })
 export class SelectedWorksiteComponent implements OnInit, OnDestroy {
 
+  subs: Subscription | undefined;
+
+  labelArray = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   worksitesSubs: Subscription | undefined;
 
+  hours$: Observable<ChartHour[]> | undefined;
   total$: Observable<number | undefined> | undefined;
   totalForDay$: Observable<number | undefined> | undefined;
   mostRecentWorksite$: Observable<Worksite | null> | undefined;
@@ -30,6 +40,57 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
     );
     this.total$ = this.hoursQuery.totalHours(this.mostRecentWorksite$);
     this.totalForDay$ = this.hoursQuery.totalHoursForDay(this.mostRecentWorksite$);
+
+    this.hours$ = this.hoursQuery.selectAll().pipe(
+      map(els => els.sort((a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime())),
+      map(sorted => {
+        const weekHours = this.mapToWeekHours(sorted);
+        const mapped = this.mapToChartHours(weekHours);
+
+        const indexedObj: Indexed = {};
+        mapped.forEach(el => {
+          if (!indexedObj[el.num]) {
+            indexedObj[el.num] = el;
+          } else {
+            indexedObj[el.num].hours += el.hours;
+          }
+        })
+
+        const filledArray = new Array(7);
+        filledArray.fill(0);
+
+        for (const [i, el] of Object.entries(indexedObj)) {
+          filledArray[el.num - 1] = el;
+        }
+
+        return filledArray;
+      }),
+      filter(el => el.length !== 0),
+    );
+  }
+
+  mapToChartHours(weekHours: Hour[]) {
+    return weekHours.map(el => {
+      const utc = new Date(el.updatedAt).toUTCString();
+      let weekday = new Date(utc).getUTCDay();
+      const weekDayName = moment(new Date(el.updatedAt)).format("ddd");
+      const hoursMarked = el.marked;
+      weekday === 0 ? weekday = 7 : weekday;
+
+      const chartHour: ChartHour = {
+        num: weekday,
+        day: weekDayName,
+        hours: hoursMarked
+      };
+
+      return chartHour;
+    });
+  }
+
+  mapToWeekHours(sorted: Hour[]) {
+    const lastElement = sorted[sorted.length - 1];
+    const startWeek = moment(lastElement?.updatedAt).startOf('week');
+    return sorted.filter(el => new Date(el.updatedAt).getTime() >= new Date(startWeek.toISOString()).getTime());
   }
 
   /**

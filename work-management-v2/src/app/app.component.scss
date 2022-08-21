@@ -60,7 +60,7 @@ app-navigation-bar {
   display: flex;
   flex-direction: column;
 
-  // margin-bottom: calc(var(--header-height) + var(--size-l));
+  margin-bottom: calc(var(--header-height) + var(--size-l));
   gap: var(--size-l);
 
   @media only screen and (min-width: $bp-medium) {
