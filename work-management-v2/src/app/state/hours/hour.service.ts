@@ -101,8 +101,8 @@ export class HourService {
     private mapSnapToHours(snaps: QuerySnapshot<DocumentData>) {
         const hours: Hour[] = [];
         snaps.forEach((doc: DocumentData) => {
-            const id = doc.id;
-            const data = doc.data();
+            const id = doc['id'];
+            const data = doc['data']();
             const hour = {
                 id,
                 ...data

@@ -72,7 +72,7 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.dateInputAs$ = this.hoursForm.controls.date.valueChanges.pipe(
-      map((date: Date) => {
+      map((date: Date | null) => {
         return moment(date).format('ddd, MMMM Do YYYY')
       })
     )

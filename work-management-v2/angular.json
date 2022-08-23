@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "cli": {
-    "analytics": "f93b0de3-4fd0-4b17-ac52-890eb5e2e8ef"
+    "defaultCollection": "@datorama/akita"
   },
   "version": 1,
   "newProjectRoot": "projects",
@@ -11,9 +11,6 @@
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
-        },
-        "@schematics/angular:application": {
-          "strict": true
         }
       },
       "root": "",
@@ -111,6 +108,5 @@
         }
       }
     }
-  },
-  "defaultProject": "work-management-v2"
+  }
 }

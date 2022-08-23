@@ -113,8 +113,8 @@ export class WorksiteService {
     private mapSnapToWorksite(snaps: QuerySnapshot<DocumentData>) {
         const worksites: Worksite[] = [];
         snaps.forEach((doc: DocumentData) => {
-            const id = doc.id;
-            const data = doc.data();
+            const id = doc['id'];
+            const data = doc['data']();
             const worksite = {
                 id,
                 ...(data as object)

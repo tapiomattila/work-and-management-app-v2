@@ -59,8 +59,8 @@ export class WorktypeService {
     private mapSnapToWorktype(snaps: QuerySnapshot<DocumentData>) {
         const worktypes: Worktype[] = [];
         snaps.forEach((doc: DocumentData) => {
-            const id = doc.id;
-            const data = doc.data();
+            const id = doc['id'];
+            const data = doc['data']();
             const worktype = {
                 id,
                 ...(data as object)

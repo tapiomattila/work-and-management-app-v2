@@ -19,7 +19,7 @@ export class WorksiteQuery extends QueryEntity<WorksiteState> {
     })
 
     constructor(
-        protected store: WorksiteStore,
+        protected override store: WorksiteStore,
         private worksiteService: WorksiteService,
     ) {
         super(store);

@@ -51,10 +51,12 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     this.observerSub.push(break800$);
   }
+
   setSession() {
     const session$ = this.sessionService.setAuthState().subscribe();
     this.subs.push(session$);
   }
+
   setWorksites() {
     const worksites$ = this.sessionQuery.uid$.pipe(
       switchMap(uid => of(uid)),
@@ -64,12 +66,14 @@ export class AppComponent implements OnInit, OnDestroy {
     ).subscribe()
     this.subs.push(worksites$);
   }
+
   setUserHours() {
     const hours$ = this.sessionQuery.uid$.pipe(filter(el => el !== '')).pipe(
       switchMap(uid => uid ? this.hoursQuery.selectFetchOrStore(uid) : of([]))
     ).subscribe();
     this.subs.push(hours$);
   }
+
   setUserWorktypes() {
 
     const worktypes$ = this.sessionQuery.uid$.pipe(filter(el => el !== '')).pipe(
@@ -77,6 +81,7 @@ export class AppComponent implements OnInit, OnDestroy {
     ).subscribe();
     this.subs.push(worktypes$);
   }
+
   setUserProfile() {
     this.user$ = this.sessionQuery.allState$.pipe(
       map(el => el.displayName),
@@ -86,7 +91,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.photo$ = this.sessionQuery.allState$.pipe(
       map(el => el.photoUrl),
     )
-
   }
 
   getDate() {

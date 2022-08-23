@@ -10,7 +10,7 @@ import { WorktypeState, WorktypeStore } from './worktype.store';
 export class WorktypeQuery extends QueryEntity<WorktypeState> {
     constructor(
         private worktypeService: WorktypeService,
-        protected store: WorktypeStore,
+        protected override store: WorktypeStore,
     ) {
         super(store);
     }

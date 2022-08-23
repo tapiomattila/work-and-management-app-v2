@@ -1,17 +1,17 @@
 <main>
-  <app-header [title]="'Add Hours'"></app-header>
+  <!-- <app-header [title]="'Add Hours'"></app-header> -->
   <div class="flex-container">
     <ng-container *ngIf="currentWorksite$ | async as ws">
-      <app-worksite-info-card
+      <!-- <app-worksite-info-card
         [title]="ws.name"
         [address]="getWorksiteInfo(ws)"
         [bgBlue]="true"
         [imgPos]="true"
       >
-      </app-worksite-info-card>
+      </app-worksite-info-card> -->
     </ng-container>
   </div>
-  <form [formGroup]="hoursForm">
+  <!-- <form [formGroup]="hoursForm">
     <div class="add-hours__container">
       <div class="card flex-container added-hours">
         <p class="marked--text">Day marked hours:</p>
@@ -84,12 +84,12 @@
           [text]="'Add New'"
         ></app-form-button>
       </div>
-    </div>
-  </form>
+    </div> 
+  </form> -->
 
   <div class="card marked-hours-container">
+    <!-- <app-marked-hour-info-card></app-marked-hour-info-card>
     <app-marked-hour-info-card></app-marked-hour-info-card>
-    <app-marked-hour-info-card></app-marked-hour-info-card>
-    <app-marked-hour-info-card></app-marked-hour-info-card>
+    <app-marked-hour-info-card></app-marked-hour-info-card> -->
   </div>
 </main>

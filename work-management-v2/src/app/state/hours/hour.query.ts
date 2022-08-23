@@ -13,7 +13,7 @@ export class HourQuery extends QueryEntity<HourState> {
 
     constructor(
         private hourService: HourService,
-        protected store: HourStore,
+        protected override store: HourStore,
     ) {
         super(store);
     }

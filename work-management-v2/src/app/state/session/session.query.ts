@@ -8,7 +8,7 @@ export class SessionQuery extends Query<SessionState> {
     uid$ = this.select(auth => auth.uid);
 
     constructor(
-        protected store: SessionStore
+        protected override store: SessionStore
     ) {
         super(store);
     }
