@@ -37,24 +37,12 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-
-    /**
-     * setBreakpointsForHeader();
-     * setSession();
-     * setWorksites();
-     * setUserHours();
-     * setUserWorktypes();
-     * setUserProfile();
-     */
-
     this.setBreakpointsForHeader();
     this.setSession();
+    this.setWorksites();
     this.setUserHours();
-
-    // this.subs.push(session$);
-    // this.subs.push(worksites$);
-    // this.subs.push(hours$);
-    // this.subs.push(worktypes$);
+    this.setUserWorktypes();
+    this.setUserProfile();
   }
 
   setBreakpointsForHeader() {
