@@ -1,13 +1,13 @@
 <main>
-  <!-- <app-header [title]="'Worksite List'"></app-header> -->
+  <app-header [title]="'Worksite List'"></app-header>
   <div class="worksite-list__container">
     <ng-container *ngIf="worksites$ | async as ws">
-      <!-- <app-worksite-list-element
+      <app-worksite-list-element
         *ngFor="let worksite of ws"
         [name]="worksite?.name"
         [minutes]="worksite?.marked"
         (click)="select(worksite)"
-      ></app-worksite-list-element> -->
+      ></app-worksite-list-element>
     </ng-container>
   </div>
 </main>

@@ -64,41 +64,8 @@ export class BarChartComponent implements OnInit {
     },
   ];
 
-  // {
-  //   data: this.dataArr,
-  //   label: this.header,
-  //   hoverBackgroundColor: '#776bea',
-  //   borderCapStyle: 'round',
-  //   borderRadius: 20,
-  //   barThickness: 28
-  // },
-
   constructor() { }
 
   ngOnInit(): void {
-    // setTimeout(() => {
-    //   this.barChartData = [];
-    //   this.barChartData.push({
-    //     data: this.dataArr,
-    //     label: '',
-    //     hoverBackgroundColor: '#776bea',
-    //     borderCapStyle: 'round',
-    //     borderRadius: 20,
-    //     barThickness: 28
-    //   })
-    //   // this.barChartData[0].data.push(1);
-    // }, 1000);
-
-    // setTimeout(() => {
-    //   this.barChartData = [];
-    //   this.barChartData.push({
-    //     data: [4],
-    //     label: this.header,
-    //     hoverBackgroundColor: '#776bea',
-    //     borderCapStyle: 'round',
-    //     borderRadius: 20,
-    //     barThickness: 28
-    //   })
-    // }, 3000);
   }
 }
