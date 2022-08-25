@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MINUTESINHOUR } from 'src/app/utils/configs/app.config';
 import { convertToHoursAndMinutes } from 'src/app/utils/functions';
 
 @Component({
@@ -14,7 +15,7 @@ export class SmallCardComponent implements OnInit {
   @Input() start: boolean = false;
   @Input()
   set value(value: number) {
-    const hours = value / 60;
+    const hours = value /  MINUTESINHOUR;
     const isFullHours = Number.isInteger(hours);
 
     if (!isFullHours) {

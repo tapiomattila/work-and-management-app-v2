@@ -4,7 +4,7 @@ import { getDocs, query, where } from '@angular/fire/firestore';
 import { Firestore, Query } from '@angular/fire/firestore';
 import { DocumentData, QuerySnapshot } from '@angular/fire/firestore';
 import { collection } from '@firebase/firestore';
-import { DatabaseCollection } from 'src/app/utils/enums/db.enum';
+import { DatabaseCollection } from 'src/app/utils/enums/app.enum';
 import { from } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 import { createWorktype, Worktype } from './worktype.model';

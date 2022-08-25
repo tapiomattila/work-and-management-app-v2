@@ -1,5 +1,6 @@
 import { Hour } from "../state/hours/hour.model";
 import { Worksite } from "../state/worksites/worksite.model";
+import { MINUTESINHOUR } from "./configs/app.config";
 
 /**
  * 
@@ -7,9 +8,9 @@ import { Worksite } from "../state/worksites/worksite.model";
  * @returns
  */
 export function convertToHoursAndMinutes(value: number) {
-  let decimals = value / 60 - Math.floor(value / 60);
-  const minutes = decimals * 60;
-  const hours = (value - minutes) / 60;
+  let decimals = value / MINUTESINHOUR - Math.floor(value / MINUTESINHOUR);
+  const minutes = decimals * MINUTESINHOUR;
+  const hours = (value - minutes) / MINUTESINHOUR;
 
   return {
     hours,
@@ -70,5 +71,5 @@ export function compareToCurrentDate(inputDate: string) {
  */
 export function hoursReduce(hours: Hour[]) {
   const reducedHours = hours?.map(el => el.marked).reduce((prev, cur) => prev + cur, 0);
-  return reducedHours * 60;
+  return reducedHours * MINUTESINHOUR;
 }

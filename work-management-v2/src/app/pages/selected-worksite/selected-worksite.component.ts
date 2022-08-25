@@ -8,17 +8,12 @@ import { Worksite } from 'src/app/state/worksites/worksite.model';
 import { WorksiteQuery } from 'src/app/state/worksites/worksite.query';
 import { ChartHour, Hour } from 'src/app/state/hours/hour.model';
 
-interface Indexed {
-  [prop: number]: ChartHour
-}
-
 @Component({
   selector: 'app-selected-worksite',
   templateUrl: './selected-worksite.component.html',
   styleUrls: ['./selected-worksite.component.scss'],
 })
 export class SelectedWorksiteComponent implements OnInit, OnDestroy {
-
   subs: Subscription | undefined;
 
   labelArray = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -26,35 +21,45 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
 
   hours$: Observable<ChartHour[]> | undefined;
   total$: Observable<number | undefined> | undefined;
-  totalForDay$: Observable<number | undefined> | undefined;
+  totalForDay$: Observable<number | string | undefined> | undefined;
   mostRecentWorksite$: Observable<Worksite | null> | undefined;
 
   constructor(
     private worksiteQuery: WorksiteQuery,
     private hoursQuery: HourQuery
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.mostRecentWorksite$ = this.mostRecentWorksite().pipe(
-      shareReplay()
-    );
+    this.mostRecentWorksite$ = this.mostRecentWorksite().pipe(shareReplay());
     this.total$ = this.hoursQuery.totalHours(this.mostRecentWorksite$);
-    this.totalForDay$ = this.hoursQuery.totalHoursForDay(this.mostRecentWorksite$);
+
+    this.totalForDay$ = this.hoursQuery
+      .totalHoursForDay(this.mostRecentWorksite$)
+      .pipe(
+        filter((el) => el !== undefined),
+        map((el) => (!el ? 'No data' : el))
+      );
 
     this.hours$ = this.hoursQuery.selectAll().pipe(
-      map(els => els.sort((a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime())),
-      map(sorted => {
+      map((els) =>
+        els.sort(
+          (a, b) =>
+            new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+        )
+      ),
+      map((sorted) => {
         const weekHours = this.mapToWeekHours(sorted);
         const mapped = this.mapToChartHours(weekHours);
 
-        const indexedObj: Indexed = {};
-        mapped.forEach(el => {
+        const indexedObj: { [prop: number]: ChartHour } = {}
+
+        mapped.forEach((el) => {
           if (!indexedObj[el.num]) {
             indexedObj[el.num] = el;
           } else {
             indexedObj[el.num].hours += el.hours;
           }
-        })
+        });
 
         const filledArray = new Array(7);
         filledArray.fill(0);
@@ -65,22 +70,22 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
 
         return filledArray;
       }),
-      filter(el => el.length !== 0),
+      filter((el) => el.length !== 0)
     );
   }
 
   mapToChartHours(weekHours: Hour[]) {
-    return weekHours.map(el => {
+    return weekHours.map((el) => {
       const utc = new Date(el.updatedAt).toUTCString();
       let weekday = new Date(utc).getUTCDay();
-      const weekDayName = moment(new Date(el.updatedAt)).format("ddd");
+      const weekDayName = moment(new Date(el.updatedAt)).format('ddd');
       const hoursMarked = el.marked;
-      weekday === 0 ? weekday = 7 : weekday;
+      weekday === 0 ? (weekday = 7) : weekday;
 
       const chartHour: ChartHour = {
         num: weekday,
         day: weekDayName,
-        hours: hoursMarked
+        hours: hoursMarked,
       };
 
       return chartHour;
@@ -88,9 +93,22 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
   }
 
   mapToWeekHours(sorted: Hour[]) {
-    const lastElement = sorted[sorted.length - 1];
-    const startWeek = moment(lastElement?.updatedAt).startOf('week');
-    return sorted.filter(el => new Date(el.updatedAt).getTime() >= new Date(startWeek.toISOString()).getTime());
+    /**
+     * - get current week start date
+     * - filter out older elements
+     * - proceed as it is
+     */
+
+    const currentDate = new Date();
+    const startWeek = moment(currentDate).startOf('week');
+
+    // const lastElement = sorted[sorted.length - 1];
+    // const startWeek = moment(lastElement?.updatedAt).startOf('week');
+    return sorted.filter(
+      (el) =>
+        new Date(el.updatedAt).getTime() >=
+        new Date(startWeek.toISOString()).getTime()
+    );
   }
 
   /**
@@ -98,7 +116,21 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
    * @returns Obsevable<Worksite | null>
    */
   mostRecentWorksite() {
-    return this.hoursQuery.selectMostRecentHourWorksite(this.worksiteQuery.worksites$);
+    return this.hoursQuery.selectMostRecentHourWorksite(
+      this.worksiteQuery.worksites$
+    );
+  }
+
+  isCurrentDayTotalString(value: number | string) {
+    return typeof value === 'string';
+  }
+
+  isCurrentDayTotalNumber(value: number | string) {
+    return typeof value === 'number';
+  }
+
+  convertToNumber(value: number | string) {
+    return +value;
   }
 
   ngOnDestroy(): void {

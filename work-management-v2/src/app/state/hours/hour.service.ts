@@ -5,7 +5,7 @@ import { DocumentData, QuerySnapshot } from '@angular/fire/firestore';
 import { DocumentReference, DocumentSnapshot } from '@firebase/firestore';
 import { from, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, shareReplay, switchMap } from 'rxjs/operators';
-import { DatabaseCollection } from 'src/app/utils/enums/db.enum';
+import { DatabaseCollection } from 'src/app/utils/enums/app.enum';
 import { createHour, Hour } from './hour.model';
 import { HourStore } from './hour.store';
 

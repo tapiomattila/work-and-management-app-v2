@@ -3,3 +3,7 @@ export enum DatabaseCollection {
     WORKTYPES = 'worktypes',
     HOURS = 'hours'
 }
+
+export enum ROUTEPARAMS {
+    WORKSITEID = 'worksiteId'
+}

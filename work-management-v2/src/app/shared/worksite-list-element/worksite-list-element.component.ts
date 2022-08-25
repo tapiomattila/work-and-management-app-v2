@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MINUTESINHOUR } from 'src/app/utils/configs/app.config';
 import { convertToHoursAndMinutes } from 'src/app/utils/functions';
 
 @Component({
@@ -14,7 +15,7 @@ export class WorksiteListElementComponent implements OnInit {
   @Input()
   set minutes(minutes: number | undefined) {
     if (minutes) {
-      const hours = minutes / 60;
+      const hours = minutes / MINUTESINHOUR;
       const isFullHours = Number.isInteger(hours);
   
       if (!isFullHours) {

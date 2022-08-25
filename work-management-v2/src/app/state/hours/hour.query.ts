@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { QueryEntity } from '@datorama/akita';
 import { Observable, of } from 'rxjs';
 import { debounceTime, map, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { MINUTESINHOUR } from 'src/app/utils/configs/app.config';
 import { compareToCurrentDate, hoursReduce, mostRecentWorksiteByHour } from 'src/app/utils/functions';
 import { Worksite } from '../worksites/worksite.model';
 import { Hour } from './hour.model';
@@ -73,7 +74,7 @@ export class HourQuery extends QueryEntity<HourState> {
                     .map(el => el.marked || 0)
                     .reduce((prev, cur) => prev + cur, 0)
             }),
-            map(hour => hour * 60)
+            map(hour => hour * MINUTESINHOUR)
         );
     }
 

@@ -16,12 +16,20 @@
     ></app-small-card>
   </ng-container>
 
-  <ng-container *ngIf="totalForDay$ | async as currentDay; else nocard2">
-    <app-small-card
+  <ng-container *ngIf="totalForDay$ | async as currentDay; else loading2">
+    <ng-container *ngIf="isCurrentDayTotalString(currentDay)">
+      <app-small-card
       [start]="true"
       [title]="'Current day'"
-      [value]="currentDay"
     ></app-small-card>
+    </ng-container>
+    <ng-container *ngIf="isCurrentDayTotalNumber(currentDay)">
+      <app-small-card
+        [start]="true"
+        [title]="'Current day'"
+        [value]="convertToNumber(currentDay)"
+      ></app-small-card>
+    </ng-container>
   </ng-container>
 </div>
 
@@ -51,7 +59,7 @@
     </div>
   </ng-template>
 
-  <ng-template #nocard2>
+  <ng-template #loading2>
     <div class="start">
       <div class="card">
         <h2>loading card 2</h2>

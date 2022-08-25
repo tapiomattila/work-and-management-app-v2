@@ -12,14 +12,15 @@ import { Worksite } from 'src/app/state/worksites/worksite.model';
 import { WorksiteQuery } from 'src/app/state/worksites/worksite.query';
 import { Worktype } from 'src/app/state/worktypes/worktype.model';
 import { WorktypeQuery } from 'src/app/state/worktypes/worktype.query';
+import { MINUTESINHOUR } from 'src/app/utils/configs/app.config';
+import { ROUTEPARAMS } from 'src/app/utils/enums/app.enum';
 
 @Component({
   selector: 'app-add-hours-page',
   templateUrl: './add-hours-page.component.html',
-  styleUrls: ['./add-hours-page.component.scss']
+  styleUrls: ['./add-hours-page.component.scss'],
 })
 export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
-
   private subs: Subscription | undefined;
 
   currentWorksite$: Observable<Worksite | null> | undefined;
@@ -44,66 +45,70 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private sessionQuery: SessionQuery,
     private hourService: HourService,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const routeWorksite$ = this.route.params.pipe(
       switchMap((params: Params) => {
-        return params['worksiteId'] ? this.worksiteQuery.selectWorksiteByID(params['worksiteId']) : of(null);
-      }),
+        return params[ROUTEPARAMS.WORKSITEID]
+          ? this.worksiteQuery.selectWorksiteByID(
+              params[ROUTEPARAMS.WORKSITEID]
+            )
+          : of(null);
+      })
     );
 
     const mostRecentWorksite$ = routeWorksite$.pipe(
-      switchMap(res => {
+      switchMap((res) => {
         if (res) {
           return of(null);
         }
-        return this.hourQuery.selectMostRecentHourWorksite(this.worksiteQuery.worksites$)
+        return this.hourQuery.selectMostRecentHourWorksite(
+          this.worksiteQuery.worksites$
+        );
       })
     );
 
     this.currentWorksite$ = routeWorksite$.pipe(
-      switchMap(res => {
+      switchMap((res) => {
         if (res) {
-          return of(res)
+          return of(res);
         }
-        return mostRecentWorksite$
+        return mostRecentWorksite$;
       })
     );
 
     this.dateInputAs$ = this.hoursForm.controls.date.valueChanges.pipe(
       map((date: Date | null) => {
-        return moment(date).format('ddd, MMMM Do YYYY')
+        return moment(date).format('ddd, MMMM Do YYYY');
       })
-    )
+    );
     const dateSub = this.dateInputAs$.subscribe();
 
     const uid$ = this.sessionQuery.uid$.pipe(
       shareReplay(),
-      filter(el => el !== '')
+      filter((el) => el !== '')
     );
 
     const ws$ = uid$.pipe(
-      switchMap(uid => this.worksiteQuery.selectWorksitesByUID(uid).pipe(
-        filter(el => el.length !== 0)
-      ))
+      switchMap((uid) =>
+        this.worksiteQuery
+          .selectWorksitesByUID(uid)
+          .pipe(filter((el) => el.length !== 0))
+      )
     );
 
     const wt$ = uid$.pipe(
-      switchMap(uid => this.worktypeQuery.selectWorktypesByUID(uid)),
-      filter(el => el.length !== 0)
+      switchMap((uid) => this.worktypeQuery.selectWorktypesByUID(uid)),
+      filter((el) => el.length !== 0)
     );
 
-    const combined$ = combineLatest([
-      uid$,
-      wt$,
-      ws$
-    ]);
+    const combined$ = combineLatest([uid$, wt$, ws$]);
 
     combined$.subscribe((res: [string, Worktype[], Worksite[]]) => {
       const [uid, wt, ws] = res;
-      wt.forEach(el => this.worktypes.push(el))
-      ws.forEach(el => this.worksites.push(el))
+      wt.forEach((el) => this.worktypes.push(el));
+      ws.forEach((el) => this.worksites.push(el));
     });
 
     this.subs?.add(dateSub);
@@ -128,9 +133,13 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onButtonClick(form: NgForm) {
     const { date, worksite, worktype, slider } = form.value;
-    const marked = slider / 60;
+    const marked = slider / MINUTESINHOUR;
 
-    const modifyDate = new Date(date).toISOString();
+    // date select takes day:00:00 local time (+3, in finland) so the UTC time is not right (-3, in finland) (wrong day)
+    const correctDayUTC = moment(new Date(date)).add(12, 'hour');
+    const dateConvert = new Date(correctDayUTC.toISOString()).toUTCString();
+    const modifyDate = new Date(dateConvert).toISOString();
+
     const uid = this.sessionQuery.getValue().uid;
 
     const worksiteName = this.worksiteQuery.getWorksiteByID(worksite)?.name;
@@ -150,12 +159,13 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
       worksiteId: worksite,
       worksiteName: wsName,
       worktypeId: worktype,
-      worktypeName: wtName
+      worktypeName: wtName,
     };
 
-    this.hourService.addNewHour(hour).pipe(
-      tap((hour: Hour) => this.hourService.addHourToStore(hour))
-    ).subscribe(res => console.log('show res', res));
+    this.hourService
+      .addNewHour(hour)
+      .pipe(tap((hour: Hour) => this.hourService.addHourToStore(hour)))
+      .subscribe((res) => console.log('show res', res));
   }
 
   getWorksiteInfo(worksite: Worksite) {
@@ -165,5 +175,4 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.subs?.unsubscribe();
   }
-
 }

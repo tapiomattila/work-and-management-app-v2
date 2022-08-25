@@ -5,10 +5,11 @@ import { collection } from '@firebase/firestore';
 import { DocumentData, QuerySnapshot } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, shareReplay, tap } from 'rxjs/operators';
-import { DatabaseCollection } from 'src/app/utils/enums/db.enum';
+import { DatabaseCollection } from 'src/app/utils/enums/app.enum';
 import { createWorksite, Worksite } from './worksite.model';
 import { WorksiteStore } from './worksite.store';
 import { Hour } from '../hours/hour.model';
+import { MINUTESINHOUR } from 'src/app/utils/configs/app.config';
 
 interface WsMarked {
     wsId: string;
@@ -63,7 +64,7 @@ export class WorksiteService {
 
                     const comp = {
                         ...el,
-                        marked: mapped * 60
+                        marked: mapped * MINUTESINHOUR
                     } as Worksite;
                     worksitesArr.push(comp);
                 });
