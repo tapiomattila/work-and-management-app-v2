@@ -19,6 +19,25 @@ export class HourQuery extends QueryEntity<HourState> {
         super(store);
     }
 
+    selectTotalHoursForDay(worksiteId: string) {
+        return this.selectAll({
+            filterBy: [
+                entity => entity.worksiteId === worksiteId
+            ]
+        }).pipe(
+            map(res => {
+                const mapped = res.map(el => {
+                    const obj = {
+                        marked: el.marked,
+                        date: el.updatedAt
+                    };
+                    return obj;
+                });
+                return mapped;
+            })
+        )
+    }
+
     /**
      * select hour from store by hour id
      * @param id hour id

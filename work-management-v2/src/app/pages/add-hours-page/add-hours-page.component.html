@@ -14,14 +14,21 @@
     <div class="add-hours__container">
       <div class="card flex-container added-hours">
         <p class="marked--text">Day marked hours:</p>
-        <p class="marked--hours">17h 30m</p>
+        <ng-container *ngIf="totalHours$ | async as total">
+          <p class="marked--hours">{{ total }}</p>
+        </ng-container>
       </div>
 
       <div class="card flex-container date add-hours__component">
         <div class="date-form" (click)="picker.open()">
           <div class="inner-grid">
             <h2>Date</h2>
-            <h2 *ngIf="dateInputAs$ | async as date" class="date-form__selected-date">{{ date }}</h2>
+            <h2
+              *ngIf="dateInputAs$ | async as date"
+              class="date-form__selected-date"
+            >
+              {{ date }}
+            </h2>
           </div>
           <mat-form-field
             style="visibility: hidden; height: 1px; margin: 0; padding: 0"
@@ -79,11 +86,11 @@
       <div style="display: flex; justify-content: center">
         <app-form-button
           [form]="hoursForm"
-          (buttonClick)="onButtonClick($event)"
+          (buttonClick)="onSubmit($event)"
           [text]="'Add New'"
         ></app-form-button>
       </div>
-    </div> 
+    </div>
   </form>
 
   <div class="card marked-hours-container">
