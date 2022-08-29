@@ -38,7 +38,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private sessionService: SessionService,
     private wsService: WorksiteService,
     public bpService: BreakpointService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.setBreakpointsForHeader();

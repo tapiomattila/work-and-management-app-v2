@@ -2,11 +2,10 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import * as moment from 'moment';
-import { combineLatest, Observable, of, Subscription } from 'rxjs';
+import { combineLatest, forkJoin, Observable, of, Subscription } from 'rxjs';
 import {
   filter,
   map,
-  reduce,
   shareReplay,
   switchMap,
   tap,
@@ -31,7 +30,7 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private subs: Subscription | undefined;
 
   currentWorksite$: Observable<Worksite | null> | undefined;
-  totalHours$: Observable<number | undefined> | undefined;
+  totalHours$: Observable<string | undefined> | undefined;
 
   dateInput = new FormControl(new Date());
   dateInputAs$: Observable<string> | undefined;
@@ -53,7 +52,7 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private sessionQuery: SessionQuery,
     private hourService: HourService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const routeWorksite$ = this.getRouteWorksite();
@@ -62,39 +61,10 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
       routeWorksite$,
       mostRecentWorksite$
     );
-    this.dateInputAs$ = this.getDateInputFormat();
+    this.dateInputAs$ = this.getInputDateData();
     const uid$ = this.getUID();
+    this.totalHours$ = this.getCurrentDayTotalHours(this.currentWorksite$);
     this.fillDropdownData(uid$);
-
-    this.totalHours$ = this.currentWorksite$.pipe(
-      switchMap((ws) => {
-        if (ws) {
-          return this.hourQuery.selectTotalHoursForDay(ws.id);
-        } else {
-          return of(null);
-        }
-      }),
-      map((els) => {
-        const test = els?.filter((el) => {
-          const currentDate = new Date().getDate();
-          const compareDate = new Date(el.date).getDate();
-          return currentDate === compareDate;
-        });
-
-        const test2 = test
-          ?.map((el) => el.marked)
-          .reduce((prev, cur) => prev + cur);
-        return test2;
-      }),
-      filter((el) => el !== undefined)
-    );
-
-    const testSub = this.totalHours$.subscribe((res) =>
-      console.log('show total hours', res)
-    );
-    const dateSub = this.dateInputAs$.subscribe();
-    this.subs?.add(dateSub);
-    this.subs?.add(testSub);
   }
 
   ngAfterViewInit(): void {
@@ -144,8 +114,8 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
       switchMap((params: Params) => {
         return params[ROUTEPARAMS.WORKSITEID]
           ? this.worksiteQuery.selectWorksiteByID(
-              params[ROUTEPARAMS.WORKSITEID]
-            )
+            params[ROUTEPARAMS.WORKSITEID]
+          )
           : of(null);
       }),
       shareReplay()
@@ -154,14 +124,7 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getMostRecent(routeWorksite$: Observable<Worksite | null>) {
     return routeWorksite$.pipe(
-      switchMap((res) => {
-        if (res) {
-          return of(null);
-        }
-        return this.hourQuery.selectMostRecentHourWorksite(
-          this.worksiteQuery.worksites$
-        );
-      })
+      switchMap(ws => ws ? of(null) : this.hourQuery.selectMostRecentHourWorksite(this.worksiteQuery.worksites$))
     );
   }
 
@@ -170,21 +133,27 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     mostRecentWorksite$: Observable<Worksite | null>
   ) {
     return routeWorksite$.pipe(
-      switchMap((res) => {
-        if (res) {
-          return of(res);
-        }
-        return mostRecentWorksite$;
+      switchMap((ws) => ws ? of(ws) : mostRecentWorksite$),
+    );
+  }
+
+  getInputDateData() {
+    return this.getDateInputValueChange().pipe(
+      map(res => {
+        if (!res) return '';
+        const isoDate = this.getDate(res);
+        const date = new Date(isoDate);
+        return this.getDateInputFormat(date);
       })
     );
   }
 
-  getDateInputFormat() {
-    return this.hoursForm.controls.date.valueChanges.pipe(
-      map((date: Date | null) => {
-        return moment(date).format('ddd, MMMM Do YYYY');
-      })
-    );
+  getDateInputValueChange() {
+    return this.hoursForm.controls.date.valueChanges;
+  }
+
+  getDateInputFormat(date: Date) {
+    return moment(date).format('ddd, MMMM Do YYYY');
   }
 
   getUID() {
@@ -224,6 +193,51 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
       : moment(new Date(date)).add(12, 'hour');
     const dateConvert = new Date(correctDayUTC.toISOString()).toUTCString();
     return new Date(dateConvert).toISOString();
+  }
+
+  filterDate(elements: { marked: number; date: string; }[] | null, comparableISODate: string) {
+    return elements?.filter((el) => {
+      const comparable = new Date(comparableISODate).getDate();
+      const compareDate = new Date(el.date).getDate();
+      return comparable === compareDate;
+    });
+  }
+
+  mapTotalHoursNumber(elements: { marked: number; date: string; }[] | undefined) {
+    return elements
+      ?.map((el) => el.marked)
+      .reduce((prev, cur) => prev + cur, 0);
+  }
+
+  // TODO: get input date value in function input (no function local variable)
+  getCurrentDayTotalHours(currentWorksite$: Observable<Worksite | null>) {
+    let date = '';
+    return this.getDateInputValueChange().pipe(
+      tap(res => res ? date = res.toISOString() : date = ''),
+      switchMap(() => {
+        return currentWorksite$.pipe(
+          switchMap((ws) => ws ? this.hourQuery.selectTotalHoursForDay(ws.id) : of(null)),
+          map((els) => {
+            console.log('show date', date);
+            const test = this.getDate(new Date(date));
+            console.log('test', test);
+            const obj = this.filterDate(els, test);
+            return this.mapTotalHoursNumber(obj);
+          }),
+          filter((el) => el !== undefined),
+          map(total => {
+            if (!total) return;
+            const remainder = total % 1;
+            if (remainder !== 0) {
+              const full = total - remainder;
+              return `${full.toString()}h ${remainder * MINUTESINHOUR}min`
+            }
+            return `${total.toString()}h`
+          })
+        );
+      }),
+      tap(res => console.log('change', res))
+    )
   }
 
   fillDropdownData(uid$: Observable<string>) {
