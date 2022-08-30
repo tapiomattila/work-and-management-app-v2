@@ -95,42 +95,16 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
   mapToWeekHours(sorted: Hour[]) {
     const currentDate = new Date();
     const startWeek = moment(currentDate).startOf('week');
-    const end = moment(currentDate).endOf('week').add(1);
-    console.log('end: ', end.format('ddd, MMMM Do YYYY'));
 
-    const test = sorted.filter(
+    return sorted.filter(
       (el) => {
-        const testTime = new Date(el.updatedAt).getTime();
         const testDate = new Date(el.updatedAt).getDate();
-        
-        const startTime = new Date(startWeek.toISOString()).getTime();
-        const startDate = new Date(startWeek.toISOString()).getDate();
-
-        const endTime = new Date(startWeek.toISOString()).getTime();
-        const endDate = new Date(startWeek.toISOString()).getDate();
-
-        console.log('show filter 1: ', testTime, testDate);
-        console.log('show filter 2: ', startTime, startDate);
-        console.log('show filter 3: ', endTime, endDate);
-        
-        const isInRange = testDate >= startDate;
-
-        if (isInRange) {
-          console.log('date', startDate, endDate, testDate);
-        }
-        // new Date(el.updatedAt).getTime() >=
-        // new Date(startWeek.toISOString()).getTime()
-
-        return isInRange;
+        const testMonth = new Date(el.updatedAt).getMonth() + 1;
+        const weekDate = startWeek.date() + 1;
+        const weekMonth = moment(currentDate).month() + 1;
+        return testDate >= weekDate && testMonth === weekMonth;
       }
-      
     );
-
-    console.log('test chart', test);
-
-    // const lastElement = sorted[sorted.length - 1];
-    // const startWeek = moment(lastElement?.updatedAt).startOf('week');
-    return test;
   }
 
   /**

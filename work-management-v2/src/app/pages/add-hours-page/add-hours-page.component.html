@@ -94,8 +94,10 @@
   </form>
 
   <div class="card marked-hours-container">
-    <app-marked-hour-info-card></app-marked-hour-info-card>
-    <app-marked-hour-info-card></app-marked-hour-info-card>
-    <app-marked-hour-info-card></app-marked-hour-info-card>
+    <ng-container *ngIf="hours$ | async as hours">
+      <ng-container *ngFor="let hour of hours">
+        <app-marked-hour-info-card [setHour]="hour"></app-marked-hour-info-card>
+      </ng-container>
+    </ng-container>
   </div>
 </main>
