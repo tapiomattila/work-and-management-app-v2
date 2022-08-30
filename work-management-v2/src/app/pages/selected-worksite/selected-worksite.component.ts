@@ -93,22 +93,44 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
   }
 
   mapToWeekHours(sorted: Hour[]) {
-    /**
-     * - get current week start date
-     * - filter out older elements
-     * - proceed as it is
-     */
-
     const currentDate = new Date();
     const startWeek = moment(currentDate).startOf('week');
+    const end = moment(currentDate).endOf('week').add(1);
+    console.log('end: ', end.format('ddd, MMMM Do YYYY'));
+
+    const test = sorted.filter(
+      (el) => {
+        const testTime = new Date(el.updatedAt).getTime();
+        const testDate = new Date(el.updatedAt).getDate();
+        
+        const startTime = new Date(startWeek.toISOString()).getTime();
+        const startDate = new Date(startWeek.toISOString()).getDate();
+
+        const endTime = new Date(startWeek.toISOString()).getTime();
+        const endDate = new Date(startWeek.toISOString()).getDate();
+
+        console.log('show filter 1: ', testTime, testDate);
+        console.log('show filter 2: ', startTime, startDate);
+        console.log('show filter 3: ', endTime, endDate);
+        
+        const isInRange = testDate >= startDate;
+
+        if (isInRange) {
+          console.log('date', startDate, endDate, testDate);
+        }
+        // new Date(el.updatedAt).getTime() >=
+        // new Date(startWeek.toISOString()).getTime()
+
+        return isInRange;
+      }
+      
+    );
+
+    console.log('test chart', test);
 
     // const lastElement = sorted[sorted.length - 1];
     // const startWeek = moment(lastElement?.updatedAt).startOf('week');
-    return sorted.filter(
-      (el) =>
-        new Date(el.updatedAt).getTime() >=
-        new Date(startWeek.toISOString()).getTime()
-    );
+    return test;
   }
 
   /**

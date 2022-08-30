@@ -124,7 +124,7 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getMostRecent(routeWorksite$: Observable<Worksite | null>) {
     return routeWorksite$.pipe(
-      switchMap(ws => ws ? of(null) : this.hourQuery.selectMostRecentHourWorksite(this.worksiteQuery.worksites$))
+      switchMap(ws => ws ? of(null) : this.hourQuery.selectMostRecentHourWorksite(this.worksiteQuery.worksites$)),
     );
   }
 
@@ -209,34 +209,41 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
       .reduce((prev, cur) => prev + cur, 0);
   }
 
-  // TODO: get input date value in function input (no function local variable)
   getCurrentDayTotalHours(currentWorksite$: Observable<Worksite | null>) {
-    let date = '';
-    return this.getDateInputValueChange().pipe(
-      tap(res => res ? date = res.toISOString() : date = ''),
-      switchMap(() => {
-        return currentWorksite$.pipe(
-          switchMap((ws) => ws ? this.hourQuery.selectTotalHoursForDay(ws.id) : of(null)),
-          map((els) => {
-            console.log('show date', date);
-            const test = this.getDate(new Date(date));
-            console.log('test', test);
-            const obj = this.filterDate(els, test);
-            return this.mapTotalHoursNumber(obj);
-          }),
-          filter((el) => el !== undefined),
-          map(total => {
-            if (!total) return;
-            const remainder = total % 1;
-            if (remainder !== 0) {
-              const full = total - remainder;
-              return `${full.toString()}h ${remainder * MINUTESINHOUR}min`
-            }
-            return `${total.toString()}h`
-          })
-        );
+    const dateValue$ = this.getDateInputValueChange().pipe(
+      map(res => {
+        if (!res) return '';
+        const isoDate = this.getDate(res);
+        return new Date(isoDate);
+      })
+    );
+
+    const totalHoursForDay$ = currentWorksite$.pipe(
+      switchMap((ws) => ws ? this.hourQuery.selectTotalHoursForDay(ws.id) : of(null)),
+    )
+
+    const latest$ = combineLatest({
+      date: dateValue$,
+      totalHours: totalHoursForDay$
+    });
+
+    return latest$.pipe(
+      map(res => {
+        const { totalHours, date } = res;
+        if (!totalHours || !date) return '';
+        const obj = this.filterDate(totalHours, date.toISOString());
+        return this.mapTotalHoursNumber(obj);
       }),
-      tap(res => console.log('change', res))
+      filter((el) => el !== undefined),
+      map(total => {
+        if (!total) return;
+        const remainder = total % 1;
+        if (remainder !== 0) {
+          const full = total - remainder;
+          return `${full.toString()}h ${remainder * MINUTESINHOUR}min`
+        }
+        return `${total.toString()}h`
+      }),
     )
   }
 
