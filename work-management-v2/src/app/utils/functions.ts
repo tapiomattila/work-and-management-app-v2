@@ -84,16 +84,16 @@ export function formatHoursTotal(total: number) {
   return `${total.toString()}h`;
 }
 
-export function filterToCurrentDayElement(element: Hour) {
+export function filterToDayElement(element: Hour, date: Date) {
   const elYear = new Date(element.updatedAt).getFullYear();
   const elMonth = new Date(element.updatedAt).getMonth() + 1;
   const elDate = new Date(element.updatedAt).getDate();
 
-  const curYear = new Date().getFullYear();
-  const curMonth = new Date().getMonth() + 1;
-  const curDate = new Date().getDate();
+  const compYear = date.getFullYear();
+  const compMonth = date.getMonth() + 1;
+  const compDate = date.getDate();
 
-  const isCurrentDay =
-    elYear === curYear && elMonth === curMonth && elDate === curDate;
-  return isCurrentDay;
+  const isSelectedDay =
+    elYear === compYear && elMonth === compMonth && elDate === compDate;
+  return isSelectedDay;
 }

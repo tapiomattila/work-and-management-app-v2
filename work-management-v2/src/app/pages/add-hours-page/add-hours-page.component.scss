@@ -46,9 +46,16 @@ app-worksite-info-card {
 
 .added-hours {
   display: grid;
+  grid-template-columns: repeat(2, 1fr);
   justify-content: flex-start;
 
   min-height: var(--min-height-l);
+}
+
+.loading-ws-info {
+  width: 96%;
+  aspect-ratio: 3 / 1;
+  min-width: 30rem;
 }
 
 .marked {
@@ -59,6 +66,7 @@ app-worksite-info-card {
   }
 
   &--hours {
+    text-align: center;
     color: var(--color-secondary);
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-l);
@@ -95,7 +103,12 @@ app-worksite-info-card {
   display: flex;
   flex-direction: column;
   gap: var(--gap-size-s);
-  min-height: var(--min-height-xl);
+  // min-height: var(--min-height-xl);
+}
+
+app-marked-hour-info-card {
+    display: block;
+    margin-bottom: 1rem;
 }
 
 mat-slider {

@@ -6,6 +6,7 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./worksite-info-card.component.scss'],
 })
 export class WorksiteInfoCardComponent implements OnInit {
+
   @Input() title: string | undefined;
   @Input() address: string | undefined;
   @Input() totalHours: number | undefined;

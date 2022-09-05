@@ -14,7 +14,7 @@ import { Worktype } from 'src/app/state/worktypes/worktype.model';
 import { WorktypeQuery } from 'src/app/state/worktypes/worktype.query';
 import { MINUTESINHOUR } from 'src/app/utils/configs/app.config';
 import { ROUTEPARAMS } from 'src/app/utils/enums/app.enum';
-import { filterToCurrentDayElement, formatHoursTotal } from 'src/app/utils/functions';
+import { filterToDayElement, formatHoursTotal } from 'src/app/utils/functions';
 
 @Component({
   selector: 'app-add-hours-page',
@@ -100,10 +100,12 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
       worktypeName,
     };
 
-    this.hourService
+    const addHoursSub = this.hourService
       .addNewHour(hour)
       .pipe(tap((hour: Hour) => this.hourService.addHourToStore(hour)))
-      .subscribe((res) => console.log('show res', res));
+      .subscribe();
+
+    this.subs?.add(addHoursSub);
   }
 
   getRouteWorksite() {
@@ -248,7 +250,8 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
       map((total) => {
         if (!total) return;
         return formatHoursTotal(total);
-      })
+      }),
+      map((res) => (res ? res : '0h'))
     );
   }
 
@@ -260,8 +263,8 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     const fillDropdownData = combined$.subscribe(
       (res: [string, Worktype[], Worksite[]]) => {
         const [uid, wt, ws] = res;
-        this.hoursForm.controls.worksite.setValue(ws[0].id);
-        this.hoursForm.controls.worktype.setValue(wt[2].id);
+        // this.hoursForm.controls.worksite.setValue(ws[0].id);
+        // this.hoursForm.controls.worktype.setValue(wt[2].id);
         wt.forEach((el) => this.worktypes.push(el));
         ws.forEach((el) => this.worksites.push(el));
       }
@@ -277,14 +280,20 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     return latest$.pipe(
-      switchMap(values => {
+      switchMap((values) => {
         const { date, currentWorksite: worksite } = values;
-        return worksite ? this.hourQuery.selectHoursByWorksite(worksite.id) : of([])
+        if (worksite) {
+          return this.hourQuery.selectHoursByWorksite(worksite.id).pipe(
+            map((hours: Hour[]) => {
+              if (!date) return hours;
+              return hours.filter((el) => filterToDayElement(el, date));
+            })
+          );
+        } else {
+          return of([]);
+        }
       }),
-      map((res) => {
-        return res.filter((el) => filterToCurrentDayElement(el));
-      }),
-      tap(res => console.log('show res', res))
+      tap((res) => console.log('show res', res))
     );
   }
 
