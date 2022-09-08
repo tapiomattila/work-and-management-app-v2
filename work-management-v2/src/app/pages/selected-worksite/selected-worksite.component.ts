@@ -27,7 +27,7 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
   constructor(
     private worksiteQuery: WorksiteQuery,
     private hoursQuery: HourQuery
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.mostRecentWorksite$ = this.mostRecentWorksite().pipe(shareReplay());
@@ -40,13 +40,14 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
         map((el) => (!el ? 'No data' : el))
       );
 
-    this.hours$ = this.hoursQuery.selectAll().pipe(
-      map((els) =>
-        els.sort(
+    this.hours$ = this.hoursQuery.selectFilterHoursByWorksite(this.mostRecentWorksite$).pipe(
+      map(els => {
+        if (!els) return [];
+        return els.sort(
           (a, b) =>
             new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
         )
-      ),
+      }),
       map((sorted) => {
         const weekHours = this.mapToWeekHours(sorted);
         const mapped = this.mapToChartHours(weekHours);
@@ -77,8 +78,10 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
   mapToChartHours(weekHours: Hour[]) {
     return weekHours.map((el) => {
       const utc = new Date(el.updatedAt).toUTCString();
-      let weekday = new Date(utc).getUTCDay();
-      const weekDayName = moment(new Date(el.updatedAt)).format('ddd');
+      let startDay = moment(utc).startOf('day');
+      let date = new Date(startDay.toISOString());
+      let weekday = new Date(date).getDay();
+      const weekDayName = moment(new Date(date)).format('ddd');
       const hoursMarked = el.marked;
       weekday === 0 ? (weekday = 7) : weekday;
 
@@ -87,7 +90,6 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
         day: weekDayName,
         hours: hoursMarked,
       };
-
       return chartHour;
     });
   }

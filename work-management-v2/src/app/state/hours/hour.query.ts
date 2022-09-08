@@ -177,7 +177,16 @@ export class HourQuery extends QueryEntity<HourState> {
             switchMap(ws => {
                 if (!ws) return of(undefined);
                 return this.selectCurrentDayHoursByWorksite(ws.id);
-            })
+            }),
+        );
+    }
+
+    selectFilterHoursByWorksite(worksite$: Observable<Worksite | null>) {
+        return worksite$.pipe(
+            switchMap(ws => {
+                if (!ws) return of(undefined);
+                return this.selectHoursByWorksite(ws.id);
+            }),
         );
     }
 
