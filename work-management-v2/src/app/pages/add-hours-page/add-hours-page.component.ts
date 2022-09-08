@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import * as moment from 'moment';
 import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
@@ -47,8 +47,9 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private hourQuery: HourQuery,
     private sessionQuery: SessionQuery,
     private hourService: HourService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     const routeWorksite$ = this.getRouteWorksite();
@@ -62,12 +63,33 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.totalHours$ = this.getCurrentDayTotalHoursValue(this.currentWorksite$);
     this.fillDropdownData(uid$);
     this.hours$ = this.getMarkedHoursList(this.currentWorksite$);
+
+    this.setWorksiteSelect(this.currentWorksite$);
+    this.changeWorksiteBySelect();
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.hoursForm.controls.date.setValue(new Date());
     }, 200);
+  }
+
+  setWorksiteSelect(currentWorksite$: Observable<Worksite | null>) {
+    const setWsSelectSub = currentWorksite$.pipe(
+      tap(ws => {
+        if (ws) {
+          this.hoursForm.controls.worksite.setValue(ws.id)
+        }
+      })
+    ).subscribe();
+    this.subs?.add(setWsSelectSub);
+  }
+
+  changeWorksiteBySelect() {
+    const worksiteSelectSub = this.hoursForm.controls.worksite.valueChanges.subscribe(res => {
+      this.router.navigate(['add', res])
+    });
+    this.subs?.add(worksiteSelectSub);
   }
 
   formatLabel(value: number) {
@@ -113,8 +135,8 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
       switchMap((params: Params) => {
         return params[ROUTEPARAMS.WORKSITEID]
           ? this.worksiteQuery.selectWorksiteByID(
-              params[ROUTEPARAMS.WORKSITEID]
-            )
+            params[ROUTEPARAMS.WORKSITEID]
+          )
           : of(null);
       }),
       shareReplay()
@@ -127,8 +149,8 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
         ws
           ? of(null)
           : this.hourQuery.selectMostRecentHourWorksite(
-              this.worksiteQuery.worksites$
-            )
+            this.worksiteQuery.worksites$
+          )
       )
     );
   }
@@ -138,7 +160,7 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     mostRecentWorksite$: Observable<Worksite | null>
   ) {
     return routeWorksite$.pipe(
-      switchMap((ws) => (ws ? of(ws) : mostRecentWorksite$))
+      switchMap(ws => ws ? of(ws) : mostRecentWorksite$)
     );
   }
 
@@ -293,7 +315,6 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
           return of([]);
         }
       }),
-      tap((res) => console.log('show res', res))
     );
   }
 

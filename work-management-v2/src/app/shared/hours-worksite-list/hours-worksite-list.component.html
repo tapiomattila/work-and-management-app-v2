@@ -1,0 +1,15 @@
+<app-worksite-info-card
+  [title]="title"
+  [address]="address"
+  [totalHours]="totalHours"
+></app-worksite-info-card>
+<ng-container *ngIf="sortedHours$ | async as hours; else loadingHours">
+  <app-hours-worksite-list-element
+    *ngFor="let hour of hours"
+    [setHour]="hour"
+  ></app-hours-worksite-list-element>
+</ng-container>
+<ng-template #loadingHours>
+  <p>loading ...</p>
+</ng-template>
+

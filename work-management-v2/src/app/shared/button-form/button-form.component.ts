@@ -17,7 +17,6 @@ export class ButtonFormComponent implements OnInit {
     ngOnInit() { }
 
     event() {
-        console.log('event');
         this.buttonClick.emit(this.form);
     }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { combineLatest, Observable } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { Hour } from 'src/app/state/hours/hour.model';
 import { HourQuery } from 'src/app/state/hours/hour.query';
 import { SessionQuery } from 'src/app/state/session/session.query';
@@ -55,7 +55,6 @@ export class WorksiteListComponent implements OnInit {
   }
 
   select(ws: Partial<Worksite>) {
-    console.log('show ws: ', ws.id);
     this.router.navigate(['add', ws.id]);
   }
 }

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { delay, Observable } from 'rxjs';
+import { Worksite } from 'src/app/state/worksites/worksite.model';
+import { WorksiteQuery } from 'src/app/state/worksites/worksite.query';
 
 @Component({
   selector: 'app-hours-list-page',
@@ -7,9 +10,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HoursListPageComponent implements OnInit {
 
-  constructor() { }
+  worksites$: Observable<Worksite[]> | undefined;
+
+  constructor(
+    private worksiteQuery: WorksiteQuery
+  ) { }
 
   ngOnInit(): void {
+    this.worksites$ = this.worksiteQuery.worksites$.pipe(
+      delay(2000)
+    );
   }
+
+  // getAddress(worksite: Worksite) {
+  //   if (!worksite?.info) return 'no address';
+  //   return `${worksite.info.streetAddress}, ${worksite.info.postalCode} ${worksite.info.city}`;
+  // }
 
 }
