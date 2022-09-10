@@ -9,7 +9,7 @@ export class WorksiteInfoCardComponent implements OnInit {
 
   @Input() title: string | undefined;
   @Input() address: string | undefined;
-  @Input() totalHours: number | undefined;
+  @Input() totalHours: string | undefined;
   @Input() bgBlue: boolean | undefined;
 
   constructor() {}

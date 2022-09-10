@@ -1,8 +1,11 @@
 import { Component, Input } from '@angular/core';
-import { delay, Observable } from 'rxjs';
+import { delay, map, Observable } from 'rxjs';
 import { Hour } from 'src/app/state/hours/hour.model';
 import { HourQuery } from 'src/app/state/hours/hour.query';
 import { Worksite } from 'src/app/state/worksites/worksite.model';
+import { WorksiteService } from 'src/app/state/worksites/worksite.service';
+import { MINUTESINHOUR } from 'src/app/utils/configs/app.config';
+import { formatHoursTotal } from 'src/app/utils/functions';
 
 @Component({
   selector: 'app-hours-worksite-list',
@@ -11,31 +14,37 @@ import { Worksite } from 'src/app/state/worksites/worksite.model';
 })
 export class HoursWorksiteListComponent {
 
-  title: string | undefined;
-  address: string | undefined;
-  totalHours: number | undefined;
+  worksite$: Observable<Worksite> | undefined;
   sortedHours$: Observable<Hour[]> | undefined;
 
   @Input()
   set setWorksite(value: Worksite) {
     if (!value?.info) return;
-
-    // TODO: sort hours
     this.sortedHours$ = this.hourQuery.selectHoursByWorksite(value.id).pipe(
-      delay(2000)
+      map(hours => hours.sort((a, b) => {
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+      })),
+      delay(1000)
     );
 
-    this.title = value.name;
-    this.address = `${value.info.streetAddress}, ${value.info.postalCode} ${value.info.city}`;
-    
-    // temp for loading
-    setTimeout(() => {
-      // TODO: calculate total hours from store
-      this.totalHours = 102;
-    }, 1200);
+    this.worksite$ = this.wsService.mapHoursToWorksites([value], this.hourQuery.selectAll()).pipe(
+      map(els => els[0]),
+      delay(500)
+    );
   }
 
   constructor(
-    private hourQuery: HourQuery
+    private hourQuery: HourQuery,
+    private wsService: WorksiteService
   ) { }
+
+
+  getAddresss(worksite: Worksite) {
+    return `${worksite.info.streetAddress}, ${worksite.info.postalCode} ${worksite.info.city}`;
+  }
+
+  getFormatHours(marked: number | undefined) {
+    if (!marked) return;
+    return formatHoursTotal(marked / MINUTESINHOUR);
+  }
 }
