@@ -37,7 +37,7 @@ export class SelectedWorksiteComponent implements OnInit, OnDestroy {
       .totalHoursForDay(this.mostRecentWorksite$)
       .pipe(
         filter((el) => el !== undefined),
-        map((el) => (!el ? 'No data' : el))
+        map((el) => (!el ? '0h' : el))
       );
 
     this.hours$ = this.hoursQuery.selectFilterHoursByWorksite(this.mostRecentWorksite$).pipe(

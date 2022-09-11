@@ -1,10 +1,23 @@
-<div class="container" [ngClass]="{ start: start, end: end }">
-  <div class="card grid">
-    <p class="small-cards__total-hours--title">
-      {{ title ? getTitle : "Title missing ..." }}
-    </p>
-    <p class="small-cards__total-hours--value">
-      {{ getValue ? getValue : "0h" }}
-    </p>
+<ng-container *ngIf="total$ | async as total; else loading">
+
+  <div class="container" [ngClass]="{ start: start, end: end }">
+    <div class="card grid">
+      <p class="small-cards__total-hours--title">
+        {{ title ? title : "Title missing ..." }}
+      </p>
+      <p class="small-cards__total-hours--value">
+        {{ getFormatHours(total) }}
+      </p>
+    </div>
   </div>
-</div>
+
+</ng-container>
+
+<ng-template #loading>
+  <div class="container" [ngClass]="{ start: start, end: end }">
+    <div class="card grid">
+      <p>loading ...</p>
+    </div>
+  </div>
+</ng-template>
+

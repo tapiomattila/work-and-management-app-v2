@@ -8,26 +8,15 @@
 </div>
 
 <div class="sec small-cards">
-  <ng-container *ngIf="total$ | async as total; else nocard1">
-    <app-small-card
-      [end]="true"
-      [title]="'Total hours'"
-      [value]="total"
-    ></app-small-card>
-  </ng-container>
+  <app-small-card
+  [end]="true"
+  [total$]="total$"
+  [title]="'Total hours'"></app-small-card>
 
-  <ng-container *ngIf="totalForDay$ | async as currentDay; else loading2">
-    <ng-container *ngIf="isCurrentDayTotalString(currentDay)">
-      <app-small-card [start]="true" [title]="'Current day'"></app-small-card>
-    </ng-container>
-    <ng-container *ngIf="isCurrentDayTotalNumber(currentDay)">
-      <app-small-card
-        [start]="true"
-        [title]="'Current day'"
-        [value]="convertToNumber(currentDay)"
-      ></app-small-card>
-    </ng-container>
-  </ng-container>
+  <app-small-card
+  [start]="true"
+  [total$]="totalForDay$"
+  [title]="'Current day'"></app-small-card>
 </div>
 
 <ng-container *ngIf="hours$ | async as hours">
@@ -37,22 +26,3 @@
     [labelArray]="labelArray"
   ></app-hours-chart>
 </ng-container>
-
-<!-- loading tempalates -->
-<div class="sec small-cards">
-  <ng-template #nocard1>
-    <div class="end">
-      <div class="card">
-        <h2>loading ...</h2>
-      </div>
-    </div>
-  </ng-template>
-
-  <ng-template #loading2>
-    <div class="start">
-      <div class="card">
-        <h2>loading ...</h2>
-      </div>
-    </div>
-  </ng-template>
-</div>

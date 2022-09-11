@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { MINUTESINHOUR } from 'src/app/utils/configs/app.config';
 import { formatHoursTotal } from 'src/app/utils/functions';
 
@@ -8,22 +9,18 @@ import { formatHoursTotal } from 'src/app/utils/functions';
   styleUrls: ['./small-card.component.scss'],
 })
 export class SmallCardComponent implements OnInit {
-  getValue: string | undefined;
-
+  @Input() total$: Observable<number | string | undefined> | undefined;
   @Input() title: string | undefined;
   @Input() end: boolean = false;
   @Input() start: boolean = false;
-  @Input()
-  set value(value: number) {
-    if (!value) return;
-    this.getValue = formatHoursTotal(value / MINUTESINHOUR);
-  }
 
   constructor() {}
 
   ngOnInit(): void {}
 
-  get getTitle() {
-    return `${this.title}:`;
+  getFormatHours(marked: number | string | undefined) {
+    if (!marked) return;
+    if (typeof marked === 'string') return '0h';
+    return formatHoursTotal(marked / MINUTESINHOUR);
   }
 }

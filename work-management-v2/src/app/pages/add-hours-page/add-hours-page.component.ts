@@ -285,7 +285,6 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     const fillDropdownData = combined$.subscribe(
       (res: [string, Worktype[], Worksite[]]) => {
         const [uid, wt, ws] = res;
-        // this.hoursForm.controls.worksite.setValue(ws[0].id);
         // this.hoursForm.controls.worktype.setValue(wt[2].id);
         wt.forEach((el) => this.worktypes.push(el));
         ws.forEach((el) => this.worksites.push(el));

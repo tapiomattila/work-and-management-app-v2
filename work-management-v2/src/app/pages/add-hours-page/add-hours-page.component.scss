@@ -40,7 +40,6 @@ app-worksite-info-card {
 
   &__component {
     min-height: var(--min-height-m);
-    // max-height: 5rem;
   }
 }
 
@@ -103,7 +102,6 @@ app-worksite-info-card {
   display: flex;
   flex-direction: column;
   gap: var(--gap-size-s);
-  // min-height: var(--min-height-xl);
 }
 
 app-marked-hour-info-card {
@@ -165,11 +163,6 @@ button {
   cursor: pointer;
 
   transition: .3s all;
-
-  &:disabled {
-    // color: #777;
-    // background-color: #ccc;
-  }
 
   &:hover {
     transform: translateY(-0.2rem);
