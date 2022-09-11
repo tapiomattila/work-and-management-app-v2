@@ -29,7 +29,7 @@ export class HoursWorksiteListComponent {
 
     this.worksite$ = this.wsService.mapHoursToWorksites([value], this.hourQuery.selectAll()).pipe(
       map(els => els[0]),
-      delay(500)
+      delay(500),
     );
   }
 

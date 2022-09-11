@@ -1,7 +1,7 @@
 <main>
   <app-header [title]="'Worksite List'"></app-header>
   <div class="worksite-list__container">
-    <ng-container *ngIf="worksites$ | async as ws">
+    <ng-container *ngIf="worksites$ | async as ws; else loading">
       <app-worksite-list-element
         *ngFor="let worksite of ws"
         [name]="worksite?.name"
@@ -9,5 +9,11 @@
         (click)="select(worksite)"
       ></app-worksite-list-element>
     </ng-container>
+
+    <ng-template #loading>
+      <div class="card worksite-list-el mh">
+        <p>loading ...</p>
+      </div>
+    </ng-template>
   </div>
 </main>

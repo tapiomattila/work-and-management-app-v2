@@ -1,13 +1,24 @@
-<div class="sec worksite-info card" [ngClass]="{ bgBlue: bgBlue }">
-  <div class="worksite-info__name">
-    <p>{{ title ? title : "no title" }}</p>
-  </div>
-  <div class="worksite-info__address">
-    <p *ngIf="address">{{ address }}</p>
+
+<ng-container *ngIf="worksite$ | async as ws; else loading">
+
+  <div class="sec worksite-info card" [ngClass]="{ bgBlue: bgBlue }">
+    <div class="worksite-info__name">
+      <p>{{ ws.name ? ws.name : "no title" }}</p>
+    </div>
+    <div class="worksite-info__address">
+      <p *ngIf="showAddress">{{ getAddresss(ws) }}</p>
+    </div>
+  
+    <!-- && checkMarked(ws) -->
+    <div *ngIf="showTotal && checkMarked(ws)" class="worksite-info__total-hours">
+      <span class="text">Total hours: </span>
+      <span class="hours">{{ getFormatHours(ws.marked) }}</span>
+    </div>
   </div>
 
-  <div *ngIf="totalHours" class="worksite-info__total-hours">
-    <span class="text">Total hours: </span>
-    <span class="hours">{{ totalHours }}</span>
+</ng-container>
+<ng-template #loading>
+  <div class="worksite-info card">
+    <p>loading ...</p>
   </div>
-</div>
+</ng-template>

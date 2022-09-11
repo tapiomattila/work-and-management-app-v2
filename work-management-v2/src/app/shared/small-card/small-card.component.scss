@@ -1,11 +1,6 @@
 @import "../../../styles.scss";
 
-:host {
-  // width: 100%;
-  // display: flex;
-}
-
-.test {
+.container {
   display: flex;
   justify-content: flex-end;
 }
@@ -40,17 +35,8 @@
 }
 
 .card {
-  // aspect-ratio: 16 / 9;
-  // max-height: 14rem;
-  // max-width: 24rem;
-
   width: 100%;
-
   max-width: 24rem;
-
-  // height: 90%;
-  // width: 90%;
-
   height: 14rem;
 
   @media only screen and (min-width: $bp-medium) {

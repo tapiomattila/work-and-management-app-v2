@@ -1,10 +1,10 @@
-<div class="test" [ngClass]="{ start: start, end: end }">
+<div class="container" [ngClass]="{ start: start, end: end }">
   <div class="card grid">
     <p class="small-cards__total-hours--title">
       {{ title ? getTitle : "Title missing ..." }}
     </p>
     <p class="small-cards__total-hours--value">
-      {{ getValue ? getValue : "No data yet" }}
+      {{ getValue ? getValue : "0h" }}
     </p>
   </div>
 </div>

@@ -1,13 +1,8 @@
-<ng-container *ngIf="worksite$ | async as ws; else loadingWS">
-  <app-worksite-info-card
-    [title]="ws.name"
-    [address]="getAddresss(ws)"
-    [totalHours]="getFormatHours(ws.marked)"
-  ></app-worksite-info-card>
-</ng-container>
-<ng-template #loadingWS>
-  <p>loading ws ...</p>
-</ng-template>
+<app-worksite-info-card
+  [worksite$]="worksite$"
+  [showAddress]="true"
+  [showTotal]="true"
+></app-worksite-info-card>
 
 <ng-container *ngIf="sortedHours$ | async as hours; else loadingHours">
   <app-hours-worksite-list-element

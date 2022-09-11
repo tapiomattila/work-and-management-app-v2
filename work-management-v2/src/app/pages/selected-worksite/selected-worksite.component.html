@@ -1,10 +1,10 @@
 <div class="flex-container">
-  <ng-container *ngIf="mostRecentWorksite$ | async as recent; else noInfo">
-    <app-worksite-info-card
-      [title]="recent.name"
-      [bgBlue]="true"
-    ></app-worksite-info-card>
-  </ng-container>
+  <app-worksite-info-card
+    [worksite$]="mostRecentWorksite$"
+    [showAddress]="false"
+    [showTotal]="false"
+    [bgBlue]="true"
+  ></app-worksite-info-card>
 </div>
 
 <div class="sec small-cards">
@@ -18,10 +18,7 @@
 
   <ng-container *ngIf="totalForDay$ | async as currentDay; else loading2">
     <ng-container *ngIf="isCurrentDayTotalString(currentDay)">
-      <app-small-card
-      [start]="true"
-      [title]="'Current day'"
-    ></app-small-card>
+      <app-small-card [start]="true" [title]="'Current day'"></app-small-card>
     </ng-container>
     <ng-container *ngIf="isCurrentDayTotalNumber(currentDay)">
       <app-small-card
@@ -42,19 +39,11 @@
 </ng-container>
 
 <!-- loading tempalates -->
-<div class="flex-container">
-  <ng-template #noInfo>
-    <div class="card info-card">
-      <h2>loading info</h2>
-    </div>
-  </ng-template>
-</div>
-
 <div class="sec small-cards">
   <ng-template #nocard1>
     <div class="end">
       <div class="card">
-        <h2>loading card 1</h2>
+        <h2>loading ...</h2>
       </div>
     </div>
   </ng-template>
@@ -62,7 +51,7 @@
   <ng-template #loading2>
     <div class="start">
       <div class="card">
-        <h2>loading card 2</h2>
+        <h2>loading ...</h2>
       </div>
     </div>
   </ng-template>

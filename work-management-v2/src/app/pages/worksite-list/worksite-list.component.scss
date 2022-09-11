@@ -8,6 +8,10 @@ main {
   margin-top: var(--size-m);
 }
 
+.mh {
+  min-height: 10rem;
+}
+
 app-header {
   display: grid;
 }
