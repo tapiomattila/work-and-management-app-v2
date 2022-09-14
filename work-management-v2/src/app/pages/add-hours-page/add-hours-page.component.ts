@@ -38,7 +38,7 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     date: new FormControl(new Date(), [Validators.required]),
     worksite: new FormControl('', [Validators.required]),
     worktype: new FormControl('', [Validators.required]),
-    slider: new FormControl(null, [Validators.required]),
+    slider: new FormControl(0, [Validators.required]),
   });
 
   constructor(
@@ -66,6 +66,7 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.setWorksiteSelect(this.currentWorksite$);
     this.changeWorksiteBySelect();
+    this.hourService.activeNull();
   }
 
   ngAfterViewInit(): void {
@@ -122,12 +123,65 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
       worktypeName,
     };
 
-    const addHoursSub = this.hourService
-      .addNewHour(hour)
-      .pipe(tap((hour: Hour) => this.hourService.addHourToStore(hour)))
-      .subscribe();
+    const active = this.hourQuery.getActive() as Hour
+    if (active?.id) {
 
-    this.subs?.add(addHoursSub);
+      const updateSub = this.hourService.updateDocument(hour, active.id)
+        .pipe(tap(() => this.hourService.updateHour(hour)))
+        .subscribe();
+      this.subs?.add(updateSub);
+
+    } else {
+
+      const addHoursSub = this.hourService
+        .addNewHour(hour)
+        .pipe(tap((hour: Hour) => this.hourService.addHourToStore(hour)))
+        .subscribe();
+      this.subs?.add(addHoursSub);
+
+    }
+  }
+
+  updateMarked(hour: Hour) {
+    if (!hour?.id) return;
+
+    if (this.hourQuery.hasActive()) {
+      if (this.hourQuery.getActiveId() === hour.id) {
+        this.toggleActive(hour.id);
+      } else {
+        this.clearActive();
+        this.setActiveValues(hour);
+      }
+    } else {
+      this.clearActive();
+      this.setActiveValues(hour);
+    }
+  }
+
+  get sliderValue() {
+    return this.hoursForm.controls.slider.valueChanges;
+  }
+
+  clearActive() {
+    this.hourService.activeNull();
+    this.hoursForm.controls.worksite.setValue('');
+    this.hoursForm.controls.worktype.setValue('');
+    this.hoursForm.controls.slider.setValue(0);
+  }
+
+  toggleActive(id: string) {
+    this.hourService.toggleActive(id);
+    this.hoursForm.controls.worksite.setValue('');
+    this.hoursForm.controls.worktype.setValue('');
+    this.hoursForm.controls.slider.setValue(0);
+  }
+
+  setActiveValues(hour: Hour) {
+    if (!hour?.id) return;
+    this.hourService.setActive(hour.id);
+    this.hoursForm.controls.worksite.setValue(hour.worksiteId);
+    this.hoursForm.controls.worktype.setValue(hour.worktypeId);
+    this.hoursForm.controls.slider.setValue(hour.marked * 60);
   }
 
   getRouteWorksite() {
@@ -315,6 +369,14 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }),
     );
+  }
+
+  get activeHour() {
+    return this.hourQuery.getActive();
+  }
+
+  get getButtonText() {
+    return this.hourQuery.getActive() ? 'Update' : 'Add New';
   }
 
   ngOnDestroy(): void {

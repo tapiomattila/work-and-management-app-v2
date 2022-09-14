@@ -69,22 +69,24 @@
       </div>
 
       <div class="card flex-container dropdown add-hours__component">
-        <mat-slider
-          formControlName="slider"
-          thumbLabel
-          [displayWith]="formatLabel"
-          tickInterval="60"
-          step="15"
-          min="0"
-          max="960"
-          aria-label="units"
-        ></mat-slider>
+        <div style="width: 100%">
+          <mat-slider
+            formControlName="slider"
+            thumbLabel
+            [displayWith]="formatLabel"
+            tickInterval="60"
+            step="15"
+            min="0"
+            max="960"
+            aria-label="units"
+          ></mat-slider>
+        </div>
       </div>
       <div style="display: flex; justify-content: center">
         <app-form-button
           [form]="hoursForm"
           (buttonClick)="onSubmit($event)"
-          [text]="'Add New'"
+          [text]="getButtonText"
         ></app-form-button>
       </div>
     </div>
@@ -97,6 +99,7 @@
           <app-marked-hour-info-card
             *ngFor="let hour of hours"
             [setHour]="hour"
+            (click)="updateMarked(hour)"
           ></app-marked-hour-info-card>
         </div>
       </div>

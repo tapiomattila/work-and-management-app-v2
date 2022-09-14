@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { addDoc, doc, Firestore, getDoc, Query } from '@angular/fire/firestore';
+import { addDoc, doc, Firestore, getDoc, Query, setDoc, updateDoc } from '@angular/fire/firestore';
 import { collection, query, where, getDocs } from '@firebase/firestore';
 import { DocumentData, QuerySnapshot } from '@angular/fire/firestore';
 import { DocumentReference, DocumentSnapshot } from '@firebase/firestore';
 import { from, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, shareReplay, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { DatabaseCollection } from 'src/app/utils/enums/app.enum';
 import { createHour, Hour } from './hour.model';
 import { HourStore } from './hour.store';
@@ -23,6 +23,26 @@ export class HourService {
             hoursArray.push(createHour(el));
         });
         this.store.set(hoursArray);
+    }
+
+    updateHour(hour: Hour) {
+        this.store.updateActive({ ...hour });
+    }
+
+    setActive(id: string) {
+        this.store.setActive(id);
+    }
+
+    toggleActive(id: string) {
+        this.store.toggleActive(id);
+    }
+
+    removeActive(id: string) {
+        this.store.removeActive(id);
+    }
+
+    activeNull() {
+        this.store.setActive(null);
     }
 
     /**
@@ -71,6 +91,13 @@ export class HourService {
             }),
             map(hour => this.mapDocSnapToHour(hour))
         );
+    }
+
+    updateDocument(hour: Hour, id: string) {
+        const documentRef = doc(this.firestore, DatabaseCollection.HOURS, id);
+        return from(updateDoc(documentRef, {
+            ...hour
+        }));
     }
 
     private getHourCollection(collectionQuery: Query<DocumentData>) {
