@@ -145,17 +145,19 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
   updateMarked(hour: Hour) {
     if (!hour?.id) return;
 
-    if (this.hourQuery.hasActive()) {
-      if (this.hourQuery.getActiveId() === hour.id) {
-        this.toggleActive(hour.id);
-      } else {
-        this.clearActive();
-        this.setActiveValues(hour);
-      }
-    } else {
+    if (!this.hourQuery.hasActive()) {
       this.clearActive();
       this.setActiveValues(hour);
+      return;
     }
+
+    if (this.hourQuery.getActiveId() === hour.id) {
+      this.toggleActive(hour.id);
+      return;
+    }
+
+    this.clearActive();
+    this.setActiveValues(hour);
   }
 
   get sliderValue() {
@@ -369,6 +371,16 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }),
     );
+  }
+
+  removeItem(hour: Hour) {
+    // TODO: add loading to marked info for delete xhr event
+    if (!hour?.id) return;
+    const deleteSub = this.hourService.deleteDocument(hour.id).subscribe(() => {
+      if (!hour?.id) return;
+      this.hourService.removeFromStore(hour.id);
+    })
+    this.subs?.add(deleteSub);
   }
 
   get activeHour() {

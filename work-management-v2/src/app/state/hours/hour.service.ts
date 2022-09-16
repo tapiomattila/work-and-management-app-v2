@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { addDoc, doc, Firestore, getDoc, Query, setDoc, updateDoc } from '@angular/fire/firestore';
+import { addDoc, deleteDoc, doc, Firestore, getDoc, Query, setDoc, updateDoc } from '@angular/fire/firestore';
 import { collection, query, where, getDocs } from '@firebase/firestore';
 import { DocumentData, QuerySnapshot } from '@angular/fire/firestore';
 import { DocumentReference, DocumentSnapshot } from '@firebase/firestore';
@@ -56,6 +56,11 @@ export class HourService {
         this.store.add(hour);
     }
 
+    
+    removeFromStore(hourId: string) {
+        this.store.remove(({ id }) => id === hourId);
+    }
+
     fetchHoursByUID(uid: string) {
         if (!uid) {
             return of([]);
@@ -98,6 +103,11 @@ export class HourService {
         return from(updateDoc(documentRef, {
             ...hour
         }));
+    }
+
+    deleteDocument(id: string) {
+        const documentRef = doc(this.firestore, DatabaseCollection.HOURS, id);
+        return from(deleteDoc(documentRef))
     }
 
     private getHourCollection(collectionQuery: Query<DocumentData>) {

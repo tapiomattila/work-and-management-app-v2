@@ -100,6 +100,7 @@
             *ngFor="let hour of hours"
             [setHour]="hour"
             (click)="updateMarked(hour)"
+            (removeEmit)="removeItem($event)"
           ></app-marked-hour-info-card>
         </div>
       </div>
