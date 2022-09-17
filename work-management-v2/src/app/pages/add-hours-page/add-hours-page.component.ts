@@ -1,9 +1,8 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import * as moment from 'moment';
-import { combineLatest, Observable, of, Subscription } from 'rxjs';
-import { filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { Observable, of, Subscription } from 'rxjs';
+import { shareReplay, switchMap, tap } from 'rxjs/operators';
 import { Hour } from 'src/app/state/hours/hour.model';
 import { HourQuery } from 'src/app/state/hours/hour.query';
 import { HourService } from 'src/app/state/hours/hour.service';
@@ -14,7 +13,7 @@ import { Worktype } from 'src/app/state/worktypes/worktype.model';
 import { WorktypeQuery } from 'src/app/state/worktypes/worktype.query';
 import { MINUTESINHOUR } from 'src/app/utils/configs/app.config';
 import { ROUTEPARAMS } from 'src/app/utils/enums/app.enum';
-import { filterToDayElement, formatHoursTotal } from 'src/app/utils/functions';
+import { AddHoursPageService } from './add-hours-page.service';
 
 @Component({
   selector: 'app-add-hours-page',
@@ -28,7 +27,6 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
   totalHours$: Observable<string | undefined> | undefined;
   hours$: Observable<Hour[] | undefined> | undefined;
 
-  dateInput = new FormControl(new Date());
   dateInputAs$: Observable<string> | undefined;
 
   worksites: Worksite[] = [];
@@ -48,24 +46,30 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private sessionQuery: SessionQuery,
     private hourService: HourService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private addHoursService: AddHoursPageService
   ) { }
 
   ngOnInit(): void {
     const routeWorksite$ = this.getRouteWorksite();
     const mostRecentWorksite$ = this.getMostRecent(routeWorksite$);
+    const uid$ = this.addHoursService.getUID();
+
     this.currentWorksite$ = this.getCurrent(
       routeWorksite$,
       mostRecentWorksite$
     );
-    this.dateInputAs$ = this.getInputDateData();
-    const uid$ = this.getUID();
-    this.totalHours$ = this.getCurrentDayTotalHoursValue(this.currentWorksite$);
-    this.fillDropdownData(uid$);
-    this.hours$ = this.getMarkedHoursList(this.currentWorksite$);
 
-    this.setWorksiteSelect(this.currentWorksite$);
-    this.changeWorksiteBySelect();
+    this.dateInputAs$ = this.addHoursService.getInputDateData(this.getFormControls.date);
+
+    this.totalHours$ =
+      this.addHoursService.getCurrentDayTotalHoursValue(this.currentWorksite$, this.getFormControls.date);
+    this.hours$ = this.addHoursService.getMarkedHoursList(this.currentWorksite$, this.hoursForm);
+
+    this.addHoursService.fillDropdownData(uid$, this.worksites, this.worktypes);
+    this.addHoursService.setWorksiteSelect(this.currentWorksite$, this.getFormControls.worksite);
+    this.addHoursService.changeWorksiteBySelect(this.getFormControls.worksite, this.router);
+
     this.hourService.activeNull();
   }
 
@@ -75,33 +79,48 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 200);
   }
 
-  setWorksiteSelect(currentWorksite$: Observable<Worksite | null>) {
-    const setWsSelectSub = currentWorksite$.pipe(
-      tap(ws => {
-        if (ws) {
-          this.hoursForm.controls.worksite.setValue(ws.id)
-        }
-      })
-    ).subscribe();
-    this.subs?.add(setWsSelectSub);
+  get getFormControls() {
+    return this.hoursForm.controls;
   }
 
-  changeWorksiteBySelect() {
-    const worksiteSelectSub = this.hoursForm.controls.worksite.valueChanges.subscribe(res => {
-      this.router.navigate(['add', res])
-    });
-    this.subs?.add(worksiteSelectSub);
+  get activeHour() {
+    return this.hourQuery.getActive();
   }
 
-  formatLabel(value: number) {
-    return value >= 1000 ? Math.round(value / 1000) + 'k' : value;
+  get getButtonText() {
+    return this.hourQuery.getActive() ? 'Update' : 'Add New';
   }
 
-  onSubmit(form: NgForm) {
+  get sliderValue() {
+    return this.hoursForm.controls.slider.valueChanges;
+  }
+
+  onSubmit(form: FormGroup) {
+    const hour = this.buildHour(form);
+    const active = this.hourQuery.getActive() as Hour
+    active?.id ? this.updateHour(hour, active.id) : this.addHour(hour);
+  }
+
+  updateHour(hour: Hour, id: string) {
+    const updateSub = this.hourService.updateDocument(hour, id)
+      .pipe(tap(() => this.hourService.updateHour(hour)))
+      .subscribe();
+    this.subs?.add(updateSub);
+  }
+
+  addHour(hour: Hour) {
+    const addHoursSub = this.hourService
+      .addNewHour(hour)
+      .pipe(tap((hour: Hour) => this.hourService.addHourToStore(hour)))
+      .subscribe();
+    this.subs?.add(addHoursSub);
+  }
+
+  buildHour(form: FormGroup) {
     const { date, worksite, worktype, slider } = form.value;
 
     const marked = slider / MINUTESINHOUR;
-    const modifyDate = this.getDate(date);
+    const modifyDate = this.addHoursService.getDate(date);
     const uid = this.sessionQuery.getValue().uid;
 
     const worksiteName =
@@ -122,68 +141,15 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
       worktypeId: worktype,
       worktypeName,
     };
-
-    const active = this.hourQuery.getActive() as Hour
-    if (active?.id) {
-
-      const updateSub = this.hourService.updateDocument(hour, active.id)
-        .pipe(tap(() => this.hourService.updateHour(hour)))
-        .subscribe();
-      this.subs?.add(updateSub);
-
-    } else {
-
-      const addHoursSub = this.hourService
-        .addNewHour(hour)
-        .pipe(tap((hour: Hour) => this.hourService.addHourToStore(hour)))
-        .subscribe();
-      this.subs?.add(addHoursSub);
-
-    }
+    return hour;
   }
 
   updateMarked(hour: Hour) {
-    if (!hour?.id) return;
-
-    if (!this.hourQuery.hasActive()) {
-      this.clearActive();
-      this.setActiveValues(hour);
-      return;
-    }
-
-    if (this.hourQuery.getActiveId() === hour.id) {
-      this.toggleActive(hour.id);
-      return;
-    }
-
-    this.clearActive();
-    this.setActiveValues(hour);
+    this.addHoursService.updateMarked(hour, this.hoursForm);
   }
 
-  get sliderValue() {
-    return this.hoursForm.controls.slider.valueChanges;
-  }
-
-  clearActive() {
-    this.hourService.activeNull();
-    this.hoursForm.controls.worksite.setValue('');
-    this.hoursForm.controls.worktype.setValue('');
-    this.hoursForm.controls.slider.setValue(0);
-  }
-
-  toggleActive(id: string) {
-    this.hourService.toggleActive(id);
-    this.hoursForm.controls.worksite.setValue('');
-    this.hoursForm.controls.worktype.setValue('');
-    this.hoursForm.controls.slider.setValue(0);
-  }
-
-  setActiveValues(hour: Hour) {
-    if (!hour?.id) return;
-    this.hourService.setActive(hour.id);
-    this.hoursForm.controls.worksite.setValue(hour.worksiteId);
-    this.hoursForm.controls.worktype.setValue(hour.worktypeId);
-    this.hoursForm.controls.slider.setValue(hour.marked * 60);
+  removeItem(hour: Hour) {
+    this.addHoursService.removeItem(hour);
   }
 
   getRouteWorksite() {
@@ -220,178 +186,12 @@ export class AddHoursPageComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  getInputDateData() {
-    return this.getDateInputValueChange().pipe(
-      map((res) => {
-        if (!res) return '';
-        const isoDate = this.getDate(res);
-        const date = new Date(isoDate);
-        return this.getDateInputFormat(date);
-      })
-    );
-  }
-
-  getDateInputValueChange() {
-    return this.hoursForm.controls.date.valueChanges;
-  }
-
-  getDateInputFormat(date: Date) {
-    return moment(date).format('ddd, MMMM Do YYYY');
-  }
-
-  getUID() {
-    return this.sessionQuery.uid$.pipe(
-      filter((el) => el !== ''),
-      shareReplay()
-    );
-  }
-
-  getWorksites(uid$: Observable<string>) {
-    return uid$.pipe(
-      switchMap((uid) =>
-        this.worksiteQuery
-          .selectWorksitesByUID(uid)
-          .pipe(filter((el) => el.length !== 0))
-      )
-    );
-  }
-
-  getWorktypes(uid$: Observable<string>) {
-    return uid$.pipe(
-      switchMap((uid) => this.worktypeQuery.selectWorktypesByUID(uid)),
-      filter((el) => el.length !== 0)
-    );
-  }
-
   getWorksiteInfo(worksite: Worksite) {
     return `${worksite.info.streetAddress}, ${worksite.info.postalCode} ${worksite.info.city}`;
   }
 
-  getDate(date: Date) {
-    const isCurrentDay = (date as Date).getDate() === new Date().getDate();
-
-    // date select takes day:00:00 local time (+3, in finland) so the UTC time is not right (-3, in finland) (wrong day)
-    const correctDayUTC = isCurrentDay
-      ? moment(new Date(date))
-      : moment(new Date(date)).add(12, 'hour');
-    const dateConvert = new Date(correctDayUTC.toISOString()).toUTCString();
-    return new Date(dateConvert).toISOString();
-  }
-
-  filterDate(
-    elements: { marked: number; date: string }[] | null,
-    comparableISODate: string
-  ) {
-    return elements?.filter((el) => {
-      const comparable = new Date(comparableISODate).getDate();
-      const compareDate = new Date(el.date).getDate();
-      return comparable === compareDate;
-    });
-  }
-
-  mapTotalHoursNumber(
-    elements: { marked: number; date: string }[] | undefined
-  ) {
-    return elements
-      ?.map((el) => el.marked)
-      .reduce((prev, cur) => prev + cur, 0);
-  }
-
-  getCurrentDayTotalHoursValue(currentWorksite$: Observable<Worksite | null>) {
-    const dateValue$ = this.getDateInputValueChange().pipe(
-      map((res) => {
-        if (!res) return '';
-        const isoDate = this.getDate(res);
-        return new Date(isoDate);
-      })
-    );
-
-    const totalHoursForDay$ = currentWorksite$.pipe(
-      switchMap((ws) =>
-        ws ? this.hourQuery.selectTotalHoursForDay(ws.id) : of(null)
-      )
-    );
-
-    const latest$ = combineLatest({
-      date: dateValue$,
-      totalHours: totalHoursForDay$,
-    });
-
-    return latest$.pipe(
-      map((res) => {
-        const { totalHours, date } = res;
-        if (!totalHours || !date) return '';
-        const obj = this.filterDate(totalHours, date.toISOString());
-        return this.mapTotalHoursNumber(obj);
-      }),
-      filter((el) => el !== undefined),
-      map((total) => {
-        if (!total) return;
-        return formatHoursTotal(total);
-      }),
-      map((res) => (res ? res : '0h'))
-    );
-  }
-
-  fillDropdownData(uid$: Observable<string>) {
-    const ws$ = this.getWorksites(uid$);
-    const wt$ = this.getWorktypes(uid$);
-    const combined$ = combineLatest([uid$, wt$, ws$]);
-
-    const fillDropdownData = combined$.subscribe(
-      (res: [string, Worktype[], Worksite[]]) => {
-        const [uid, wt, ws] = res;
-        // this.hoursForm.controls.worktype.setValue(wt[2].id);
-        wt.forEach((el) => this.worktypes.push(el));
-        ws.forEach((el) => this.worksites.push(el));
-      }
-    );
-    this.subs?.add(fillDropdownData);
-  }
-
-  getMarkedHoursList(currentWorksite$: Observable<Worksite | null>) {
-    const dateValue$ = this.getDateInputValueChange();
-    const latest$ = combineLatest({
-      date: dateValue$,
-      currentWorksite: currentWorksite$,
-    });
-
-    return latest$.pipe(
-      switchMap((values) => {
-        const { date, currentWorksite: worksite } = values;
-        if (worksite) {
-          return this.hourQuery.selectHoursByWorksite(worksite.id).pipe(
-            map((hours: Hour[]) => {
-              if (!date) return hours;
-              return hours.filter((el) => filterToDayElement(el, date));
-            })
-          );
-        } else {
-          return of([]);
-        }
-      }),
-    );
-  }
-
-  removeItem(hour: Hour) {
-    // TODO: add loading to marked info for delete xhr event
-    if (!hour?.id) return;
-    const deleteSub = this.hourService.deleteDocument(hour.id).subscribe(() => {
-      if (!hour?.id) return;
-      this.hourService.removeFromStore(hour.id);
-    })
-    this.subs?.add(deleteSub);
-  }
-
-  get activeHour() {
-    return this.hourQuery.getActive();
-  }
-
-  get getButtonText() {
-    return this.hourQuery.getActive() ? 'Update' : 'Add New';
-  }
-
   ngOnDestroy(): void {
     this.subs?.unsubscribe();
+    this.addHoursService.subs?.unsubscribe();
   }
 }
