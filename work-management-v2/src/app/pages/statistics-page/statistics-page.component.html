@@ -1,0 +1,14 @@
+<main>
+  <app-header [title]="'Statistics'"></app-header>
+  <div class="element">
+    <ng-container *ngIf="worksites$ | async as worksites; else loading">
+      <app-worksite-statistics
+        *ngFor="let ws of worksites"
+        [setWorksite]="ws"
+      ></app-worksite-statistics>
+    </ng-container>
+    <ng-template #loading>
+      <p>loading ...</p>
+    </ng-template>
+  </div>
+</main>
