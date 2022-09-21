@@ -38,7 +38,6 @@ export class HoursWorksiteListComponent {
     private wsService: WorksiteService
   ) { }
 
-
   getAddresss(worksite: Worksite) {
     return `${worksite.info.streetAddress}, ${worksite.info.postalCode} ${worksite.info.city}`;
   }

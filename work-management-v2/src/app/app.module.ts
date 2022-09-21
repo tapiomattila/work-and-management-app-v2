@@ -21,11 +21,13 @@ import { SelectedWorksiteModule } from './pages/selected-worksite/selected-works
 import { WorksiteListModule } from './pages/worksite-list/worksite-list.module';
 import { AddHoursPageModule } from './pages/add-hours-page/add-hours-page.module';
 import { HoursListModule } from './pages/hours-list-page/hours-list.module';
+import { StatisticsPageComponent } from './pages/statistics-page/statistics-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavigationBarComponent,
+    StatisticsPageComponent,
   ],
   imports: [
     BrowserModule,

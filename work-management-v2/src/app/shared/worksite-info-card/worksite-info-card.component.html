@@ -9,7 +9,6 @@
       <p *ngIf="showAddress">{{ getAddresss(ws) }}</p>
     </div>
   
-    <!-- && checkMarked(ws) -->
     <div *ngIf="showTotal && checkMarked(ws)" class="worksite-info__total-hours">
       <span class="text">Total hours: </span>
       <span class="hours">{{ getFormatHours(ws.marked) }}</span>

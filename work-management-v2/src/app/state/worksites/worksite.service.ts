@@ -74,6 +74,34 @@ export class WorksiteService {
         return mappedHours$;
     }
 
+    mapHoursByWorktypeAndWorksite(worksite: Worksite, hours: Hour[]) {
+
+        // TODO:
+
+        // return {
+        //     wsId: '12321',
+        //     wsName: 'worksiteName',
+        //     worktypes: [
+        //         {
+        //             wtId: '12321',
+        //             wtName: 'worktypeName',
+        //             marked: 123
+        //         },
+        //         {
+        //             wtId: '12321',
+        //             wtName: 'worktypeName',
+        //             marked: 123
+        //         },
+        //         {
+        //             wtId: '12321',
+        //             wtName: 'worktypeName',
+        //             marked: 123
+        //         },
+        //     ]
+        // }
+        return worksite;
+    }
+
     /**
      * fetch worksites by user uid
      * @param uid unique id string

@@ -14,6 +14,7 @@ import { ChartModule } from '../chart/chart.module';
 import { ButtonFormComponent } from './button-form/button-form.component';
 import { HoursWorksiteListElementComponent } from './hours-worksite-list-element/hours-worksite-list-element.component';
 import { HoursWorksiteListComponent } from './hours-worksite-list/hours-worksite-list.component';
+import { WorksiteStatisticsComponent } from './worksite-statistics/worksite-statistics.component';
 
 const components = [
   HeaderProfileComponent,
@@ -28,7 +29,8 @@ const components = [
   ButtonFormComponent,
   GoogleSigninDirective,
   HoursWorksiteListElementComponent,
-  HoursWorksiteListComponent
+  HoursWorksiteListComponent,
+  WorksiteStatisticsComponent
 ];
 
 const modules = [
