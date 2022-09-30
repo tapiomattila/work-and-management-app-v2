@@ -4,7 +4,9 @@
   [worksite$]="worksite$"
 ></app-worksite-info-card>
 
-<app-doughnut-chart
-  [dataSet]="[350, 450, 200]"
-  [setLabels]="['Download Sales', 'In-Store Sales', 'Mail-Order Sales']"
+<ng-container *ngIf="data$ | async as data">
+  <app-doughnut-chart
+  [dataSet]="data.wtData"
+  [setLabels]="data.wtNames"
 ></app-doughnut-chart>
+</ng-container>

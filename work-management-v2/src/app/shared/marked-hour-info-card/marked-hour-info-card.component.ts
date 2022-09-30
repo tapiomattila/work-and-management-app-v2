@@ -15,7 +15,6 @@ export class MarkedHourInfoCardComponent {
   type!: string;
   hour!: string;
 
-
   @Output() removeEmit = new EventEmitter();
 
   @Input()

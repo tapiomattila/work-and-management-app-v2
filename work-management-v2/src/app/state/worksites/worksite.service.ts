@@ -16,6 +16,16 @@ interface WsMarked {
     marked: number;
 }
 
+interface MappedDoughnutData {
+    [prop: string]: {
+        marked: number,
+        wtId: string,
+        wtName: string,
+        wsId: string,
+        wsName: string
+    };
+};
+
 @Injectable({ providedIn: 'root' })
 export class WorksiteService {
 
@@ -75,31 +85,23 @@ export class WorksiteService {
     }
 
     mapHoursByWorktypeAndWorksite(worksite: Worksite, hours: Hour[]) {
-
-        // TODO:
-
-        // return {
-        //     wsId: '12321',
-        //     wsName: 'worksiteName',
-        //     worktypes: [
-        //         {
-        //             wtId: '12321',
-        //             wtName: 'worktypeName',
-        //             marked: 123
-        //         },
-        //         {
-        //             wtId: '12321',
-        //             wtName: 'worktypeName',
-        //             marked: 123
-        //         },
-        //         {
-        //             wtId: '12321',
-        //             wtName: 'worktypeName',
-        //             marked: 123
-        //         },
-        //     ]
-        // }
-        return worksite;
+        return Object.values(hours).reduce((acc, hour) => {
+            if (hour.worksiteId !== worksite.id) return acc;
+            const key = hour.worktypeId;
+            const markedHours = hours
+                .filter(el => el.worktypeId === key)
+                .reduce((acc, hour) => acc += hour.marked, 0);
+            return {
+                ...acc,
+                [hour.worktypeName]: {
+                    marked: markedHours,
+                    wtId: key,
+                    wtName: hour.worktypeName,
+                    wsId: hour.worksiteId,
+                    wsName: hour.worksiteName
+                },
+            };
+        }, {} as MappedDoughnutData);
     }
 
     /**

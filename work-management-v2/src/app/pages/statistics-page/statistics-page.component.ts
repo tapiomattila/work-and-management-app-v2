@@ -22,12 +22,6 @@ export class StatisticsPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.worksites$ = this.worksiteQuery.worksites$;
-
-    setTimeout(() => {
-      const worksites = this.worksiteQuery.getAll();
-      const hours = this.hourQuery.getAll();
-      this.worksiteService.mapHoursByWorktypeAndWorksite(worksites[0], hours);
-    }, 3000);
   }
 
   setWorksiteOf(worksite: Worksite) {

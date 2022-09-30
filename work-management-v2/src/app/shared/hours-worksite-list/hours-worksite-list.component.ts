@@ -24,12 +24,12 @@ export class HoursWorksiteListComponent {
       map(hours => hours.sort((a, b) => {
         return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
       })),
-      delay(1000)
+      delay(500)
     );
 
     this.worksite$ = this.wsService.mapHoursToWorksites([value], this.hourQuery.selectAll()).pipe(
       map(els => els[0]),
-      delay(500),
+      delay(250),
     );
   }
 
