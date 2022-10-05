@@ -12,7 +12,7 @@ export class HoursListPageComponent implements OnInit {
   worksites$: Observable<Worksite[]> | undefined;
 
   constructor(
-    private worksiteQuery: WorksiteQuery
+    private worksiteQuery: WorksiteQuery,
   ) { }
 
   ngOnInit(): void {

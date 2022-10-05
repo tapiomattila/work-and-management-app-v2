@@ -1,11 +1,16 @@
-<main>
+<main class="card-container">
   <app-header [title]="'Hours List'"></app-header>
-  <div class="element">
-    <ng-container *ngIf="worksites$ | async as worksites; else loading">
-      <app-hours-worksite-list *ngFor="let worksite of worksites" [setWorksite]="worksite"></app-hours-worksite-list>
+  <div class="section">
+    <ng-container *ngIf="worksites$ | async as worksites">
+      <ng-container *ngIf="worksites.length > 0; else loading">
+        <app-hours-worksite-list
+        *ngFor="let worksite of worksites"
+        [setWorksite]="worksite"
+      ></app-hours-worksite-list>
+      </ng-container>
     </ng-container>
     <ng-template #loading>
-      <div class="card animated-bg"></div>
+      <div class="card animated-bg" style="min-height: 5rem;"></div>
     </ng-template>
   </div>
 </main>

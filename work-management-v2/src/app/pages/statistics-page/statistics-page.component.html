@@ -1,14 +1,16 @@
-<main>
+<main class="card-container">
   <app-header [title]="'Statistics'"></app-header>
-  <div class="element">
-    <ng-container *ngIf="worksites$ | async as worksites; else loading">
-      <app-worksite-statistics
-        *ngFor="let ws of worksites"
-        [setWorksite]="ws"
-      ></app-worksite-statistics>
+  <div class="section">
+    <ng-container *ngIf="worksites$ | async as worksites">
+      <ng-container *ngIf="worksites.length > 0; else loading">
+        <app-worksite-statistics
+          *ngFor="let ws of worksites"
+          [setWorksite]="ws"
+        ></app-worksite-statistics>
+      </ng-container>
     </ng-container>
     <ng-template #loading>
-      <p>loading ...</p>
+      <div class="card animated-bg" style="min-height: 5rem"></div>
     </ng-template>
   </div>
 </main>

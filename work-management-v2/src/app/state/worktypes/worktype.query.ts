@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { QueryEntity } from '@datorama/akita';
-import { of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { combineLatest, of } from 'rxjs';
+import { map, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { Worktype } from './worktype.model';
 import { WorktypeService } from './worktype.service';
 import { WorktypeState, WorktypeStore } from './worktype.store';
@@ -33,7 +33,7 @@ export class WorktypeQuery extends QueryEntity<WorktypeState> {
      * @param id worktype id
      * @returns Observable<Worktype | null>
      */
-     selectWorktypeByID(id: string) {
+    selectWorktypeByID(id: string) {
         return this.selectAll({
             filterBy: [
                 entity => entity.id === id,
@@ -58,16 +58,28 @@ export class WorktypeQuery extends QueryEntity<WorktypeState> {
      * select worktypes by UID
      * @returns Observable<Worktype[]>
      */
-     selectFetchOrStore(uid: string) {
+    selectFetchOrStore(uid: string) {
         if (!uid) {
             return of([]);
         }
         return this.selectWorktypesByUID(uid).pipe(
             switchMap((ws: Worktype[]) => {
-                return ws.length ? of(ws) : this.worktypeService.fetchWorktypesByUID(uid).pipe(
-                    tap(res => this.worktypeService.setWorktypes(res))
+                const fetch$ = this.worktypeService.fetchWorktypesByUID(uid);
+                const store$ = of(ws);
+                const comb$ = combineLatest([fetch$, store$]);
+                return comb$.pipe(
+                    tap(res => {
+                        if (!res) return;
+                        const [fetchArr, storeArr] = res;
+                        if (fetchArr?.length === 0 && storeArr?.length === 0) return;
+                        if (storeArr?.length > 0) return;
+                        if (fetchArr?.length > 0 && storeArr?.length === 0) {
+                            this.worktypeService.setWorktypes(fetchArr);
+                        }
+                    }),
                 )
             }),
+            shareReplay()
         )
     }
 }

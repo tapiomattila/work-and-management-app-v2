@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { QueryEntity } from '@datorama/akita';
-import { of } from 'rxjs';
-import { debounceTime, map, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { combineLatest, of } from 'rxjs';
+import { map, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { mostRecentWorksiteByUpdate } from 'src/app/utils/functions';
 import { Worksite } from './worksite.model';
 import { WorksiteService } from './worksite.service';
@@ -82,17 +82,27 @@ export class WorksiteQuery extends QueryEntity<WorksiteState> {
      * select worksites by UID
      * @returns Observable<Worksite[]>
      */
-     selectFetchOrStore(uid: string) {
+    selectFetchOrStore(uid: string) {
         if (!uid) {
             return of([]);
         }
         return this.selectWorksitesByUID(uid).pipe(
             switchMap((ws: Worksite[]) => {
-                return ws.length ? of(ws) : this.worksiteService.fetchWorksitesByUID(uid).pipe(
-                    tap(res => this.worksiteService.setWorksites(res))
+                const fetch$ = this.worksiteService.fetchWorksitesByUID(uid);
+                const store$ = of(ws);
+                const comb$ = combineLatest([fetch$, store$]);
+                return comb$.pipe(
+                    tap(res => {
+                        if (!res) return;
+                        const [fetchArr, storeArr] = res;
+                        if (fetchArr?.length === 0 && storeArr?.length === 0) return;
+                        if (storeArr?.length > 0) return;
+                        if (fetchArr?.length > 0 && storeArr?.length === 0) {
+                            this.worksiteService.setWorksites(fetchArr);
+                        }
+                    }),
                 )
             }),
-            debounceTime(300),
             shareReplay(),
         )
     }

@@ -8,7 +8,6 @@ import {
   of,
   Subscription,
   switchMap,
-  tap,
 } from 'rxjs';
 import { BreakpointService } from './services/breakpoint.service';
 import { HourQuery } from './state/hours/hour.query';
@@ -68,10 +67,10 @@ export class AppComponent implements OnInit, OnDestroy {
   setWorksites() {
     const worksites$ = this.sessionQuery.uid$
       .pipe(
-        switchMap((uid) => of(uid)),
         switchMap((uid) => {
-          return uid ? this.worksiteQuery.selectFetchOrStore(uid) : of([]);
-        })
+          if (!uid) return of([]);
+          return this.worksiteQuery.selectFetchOrStore(uid);
+        }),
       )
       .subscribe();
     this.subs.push(worksites$);
