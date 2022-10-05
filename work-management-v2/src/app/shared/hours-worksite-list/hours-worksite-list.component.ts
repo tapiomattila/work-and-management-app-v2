@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { delay, map, Observable } from 'rxjs';
+import { delay, map, Observable, tap } from 'rxjs';
 import { Hour } from 'src/app/state/hours/hour.model';
 import { HourQuery } from 'src/app/state/hours/hour.query';
 import { Worksite } from 'src/app/state/worksites/worksite.model';
@@ -16,6 +16,7 @@ export class HoursWorksiteListComponent {
 
   worksite$: Observable<Worksite> | undefined;
   sortedHours$: Observable<Hour[]> | undefined;
+  loadingLength: Hour[] = [];
 
   @Input()
   set setWorksite(value: Worksite) {
@@ -24,7 +25,11 @@ export class HoursWorksiteListComponent {
       map(hours => hours.sort((a, b) => {
         return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
       })),
-      delay(500)
+      tap(res => {
+        if (!res) return;
+        res.forEach(el => this.loadingLength.push(el))
+      }),
+      delay(750)
     );
 
     this.worksite$ = this.wsService.mapHoursToWorksites([value], this.hourQuery.selectAll()).pipe(

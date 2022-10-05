@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { HourQuery } from 'src/app/state/hours/hour.query';
 import { Worksite } from 'src/app/state/worksites/worksite.model';
 import { WorksiteQuery } from 'src/app/state/worksites/worksite.query';
-import { WorksiteService } from 'src/app/state/worksites/worksite.service';
 
 @Component({
   selector: 'app-statistics-page',
@@ -16,8 +14,6 @@ export class StatisticsPageComponent implements OnInit {
 
   constructor(
     private worksiteQuery: WorksiteQuery,
-    private worksiteService: WorksiteService,
-    private hourQuery: HourQuery
   ) {}
 
   ngOnInit(): void {

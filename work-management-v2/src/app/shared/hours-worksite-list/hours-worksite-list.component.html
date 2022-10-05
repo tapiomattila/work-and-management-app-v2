@@ -12,5 +12,7 @@
   ></app-hours-worksite-list-element>
 </ng-container>
 <ng-template #loadingHours>
-  <p>loading ...</p>
+  <ng-container *ngFor="let load of loadingLength">
+    <div class="card animated-bg loader-item"></div>
+  </ng-container>
 </ng-template>

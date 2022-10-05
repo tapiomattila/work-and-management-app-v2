@@ -52,6 +52,10 @@
   --icon: 4.2rem;
   --border-radius-btn: 0.6rem;
 
+  --mt-10: 1rem;
+  --mt-20: 2rem;
+  --mt-30: 3rem;
+
   // color
   --color-bg: #f5f8ff;
   --color-white: #fff;
@@ -159,5 +163,34 @@ app-header {
 
   @media only screen and (min-width: $bp-small) {
     gap: 2rem;
+  }
+}
+
+.animated-bg {
+  background-image: linear-gradient(
+      to right,
+      #f6f7f8 0%,
+      #edeef1 10%,
+      #f6f7f8 20%,
+      #f6f7f8 100%
+  );
+  background-size: 200% 100%;
+  animation: bgPos 1s linear infinite;
+}
+
+.animated-bg-text {
+  border-radius: 50px;
+  display: inline-block;
+  margin: 0;
+  height: 10px;
+  width: 100%;
+}
+
+@keyframes bgPos {
+  0% {
+      background-position: 50% 0;
+  }
+  100% {
+      background-position: -150% 0;
   }
 }
