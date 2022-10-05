@@ -2,7 +2,7 @@
   <p class="marked-hours--date">{{ date }}</p>
   <p class="marked-hours--worktype" style="width: 75%">{{ type }}</p>
   <p class="marked-hours--hours">{{ hour }}</p>
-  <div class="remove" (click)="removeItem()">
+  <div *ngIf="removeIcon" class="remove" (click)="removeItem()">
     <p>X</p>
   </div>
 </div>

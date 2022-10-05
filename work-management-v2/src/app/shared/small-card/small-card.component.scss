@@ -1,20 +1,5 @@
 @import "../../../styles.scss";
 
-.container {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.start {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.end {
-  display: flex;
-  justify-content: flex-end;
-}
-
 .grid {
   display: grid;
   grid-template-rows: repeat(2, 1fr);
@@ -36,7 +21,7 @@
 
 .card {
   width: 100%;
-  max-width: 24rem;
+  // max-width: 24rem;
   height: 14rem;
 
   @media only screen and (min-width: $bp-medium) {

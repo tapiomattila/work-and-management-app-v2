@@ -1,6 +1,5 @@
 <ng-container *ngIf="total$ | async as total; else loading">
-
-  <div class="container" [ngClass]="{ start: start, end: end }">
+  <div class="container">
     <div class="card grid">
       <p class="small-cards__total-hours--title">
         {{ title ? title : "Title missing ..." }}
@@ -10,14 +9,12 @@
       </p>
     </div>
   </div>
-
 </ng-container>
 
 <ng-template #loading>
-  <div class="container" [ngClass]="{ start: start, end: end }">
+  <div class="container">
     <div class="card grid">
       <p>loading ...</p>
     </div>
   </div>
 </ng-template>
-

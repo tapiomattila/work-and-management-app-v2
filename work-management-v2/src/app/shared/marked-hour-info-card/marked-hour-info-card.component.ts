@@ -30,6 +30,8 @@ export class MarkedHourInfoCardComponent {
     this.hour = formatHoursTotal(hour);
   }
 
+  @Input() removeIcon = true;
+
   removeItem() {
     this.removeEmit.emit(this._hour);
   }

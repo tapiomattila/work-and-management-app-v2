@@ -136,5 +136,28 @@ body {
   grid-template-rows: repeat($row, 1fr);
 }
 
-// html, body { height: 100%; }
-// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.card-container {
+  display: grid;
+  grid-template-columns: 1fr minmax(100%, 45rem) 1fr;
+
+  @media only screen and (min-width: $bp-small) {
+    grid-template-columns: 1fr 55rem 1fr;
+  }
+}
+
+app-header {
+  grid-column: 2 / 3;
+}
+
+.section {
+  padding: 1rem;
+  grid-column: 2 / 3;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media only screen and (min-width: $bp-small) {
+    gap: 2rem;
+  }
+}

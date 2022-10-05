@@ -1,6 +1,6 @@
-<main>
+<main class="card-container">
   <app-header [title]="'Worksite List'"></app-header>
-  <div class="worksite-list__container">
+  <div class="section">
     <ng-container *ngIf="worksites$ | async as ws; else loading">
       <app-worksite-list-element
         *ngFor="let worksite of ws"
@@ -11,7 +11,7 @@
     </ng-container>
 
     <ng-template #loading>
-      <div class="card worksite-list-el mh">
+      <div class="card mh">
         <p>loading ...</p>
       </div>
     </ng-template>

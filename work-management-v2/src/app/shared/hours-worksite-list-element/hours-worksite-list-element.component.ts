@@ -15,4 +15,8 @@ export class HoursWorksiteListElementComponent {
     if (!value) return;
     this.hour = value;
   }
+
+  @Input() removeIcon = true;
+
+  
 }

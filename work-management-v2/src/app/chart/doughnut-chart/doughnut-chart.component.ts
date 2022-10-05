@@ -13,12 +13,12 @@ export class DoughnutChartComponent implements OnInit {
 
   @Input()
   set setLabels(value: string[]) {
-    if (value?.length === 0) return;
+    if (!value || value?.length === 0) return;
     value.forEach(el => this.doughnutChartLabels.push(el))
   }
   @Input()
   set dataSet(value: number[]) {
-    if (value?.length === 0) return;
+    if (!value || value?.length === 0) return;
     value.forEach(el => this.dataArr.push(el));
   }
   doughnutChartData: ChartData<'doughnut'> = {

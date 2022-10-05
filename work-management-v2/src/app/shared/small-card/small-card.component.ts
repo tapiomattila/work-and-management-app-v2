@@ -11,8 +11,6 @@ import { formatHoursTotal } from 'src/app/utils/functions';
 export class SmallCardComponent implements OnInit {
   @Input() total$: Observable<number | string | undefined> | undefined;
   @Input() title: string | undefined;
-  @Input() end: boolean = false;
-  @Input() start: boolean = false;
 
   constructor() {}
 

@@ -1,108 +1,108 @@
-<main>
+<main class="card-container">
   <app-header [title]="'Add Hours'"></app-header>
-  <div class="flex-container">
+  <div class="section">
     <app-worksite-info-card
       [worksite$]="currentWorksite$"
       [showAddress]="true"
       [bgBlue]="true"
     ></app-worksite-info-card>
-  </div>
-  <form [formGroup]="hoursForm">
-    <div class="add-hours__container">
-      <div class="card flex-container added-hours">
-        <p class="marked--text">Day marked hours:</p>
-        <ng-container *ngIf="totalHours$ | async as total">
-          <p class="marked--hours">{{ total }}</p>
-        </ng-container>
-      </div>
+    <form [formGroup]="hoursForm">
+      <div class="add-hours__container">
+        <div class="card add-hours__added-hours">
+          <p class="marked--text">Day marked hours:</p>
+          <ng-container *ngIf="totalHours$ | async as total">
+            <p class="marked--hours">{{ total }}</p>
+          </ng-container>
+        </div>
 
-      <div class="card flex-container date add-hours__component">
-        <div class="date-form" (click)="picker.open()">
-          <div class="inner-grid">
-            <h2>Date</h2>
-            <h2
-              *ngIf="dateInputAs$ | async as date"
-              class="date-form__selected-date"
+        <div class="card date add-hours__date-picker">
+          <div class="date-form" (click)="picker.open()">
+            <div class="inner-grid">
+              <h2>Date</h2>
+              <h2
+                *ngIf="dateInputAs$ | async as date"
+                class="date-form__selected-date"
+              >
+                {{ date }}
+              </h2>
+            </div>
+            <mat-form-field
+              style="visibility: hidden; height: 1px; margin: 0; padding: 0"
             >
-              {{ date }}
-            </h2>
+              <mat-label style="visibility: hidden">Choose a date</mat-label>
+              <input
+                matInput
+                [matDatepicker]="picker"
+                style="visibility: hidden"
+                formControlName="date"
+              />
+              <mat-datepicker
+                #picker
+                color="primary"
+                style="visibility: hidden"
+              ></mat-datepicker>
+            </mat-form-field>
           </div>
-          <mat-form-field
-            style="visibility: hidden; height: 1px; margin: 0; padding: 0"
-          >
-            <mat-label style="visibility: hidden">Choose a date</mat-label>
-            <input
-              matInput
-              [matDatepicker]="picker"
-              style="visibility: hidden"
-              formControlName="date"
-            />
-            <mat-datepicker
-              #picker
-              color="primary"
-              style="visibility: hidden"
-            ></mat-datepicker>
+        </div>
+
+        <div class="card flex-container dropdown add-hours__component">
+          <mat-form-field appearance="fill">
+            <mat-label>Worksites</mat-label>
+            <mat-select name="worksite" formControlName="worksite">
+              <mat-option *ngFor="let ws of worksites" [value]="ws.id">
+                {{ ws.name }}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
-      </div>
 
-      <div class="card flex-container dropdown add-hours__component">
-        <mat-form-field appearance="fill">
-          <mat-label>Worksites</mat-label>
-          <mat-select name="worksite" formControlName="worksite">
-            <mat-option *ngFor="let ws of worksites" [value]="ws.id">
-              {{ ws.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+        <div class="card flex-container dropdown add-hours__component">
+          <mat-form-field appearance="fill">
+            <mat-label>Worktypes</mat-label>
+            <mat-select name="worktype" formControlName="worktype">
+              <mat-option *ngFor="let wt of worktypes" [value]="wt.id">
+                {{ wt.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
-      <div class="card flex-container dropdown add-hours__component">
-        <mat-form-field appearance="fill">
-          <mat-label>Worktypes</mat-label>
-          <mat-select name="worktype" formControlName="worktype">
-            <mat-option *ngFor="let wt of worktypes" [value]="wt.id">
-              {{ wt.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      <div class="card flex-container dropdown add-hours__component">
-        <div style="width: 100%">
-          <mat-slider
-            formControlName="slider"
-            thumbLabel
-            tickInterval="60"
-            step="15"
-            min="0"
-            max="960"
-            aria-label="units"
-          ></mat-slider>
+        <div class="card flex-container dropdown add-hours__component">
+          <div style="width: 100%">
+            <mat-slider
+              formControlName="slider"
+              thumbLabel
+              tickInterval="60"
+              step="15"
+              min="0"
+              max="960"
+              aria-label="units"
+            ></mat-slider>
+          </div>
+        </div>
+        <div class="center" style="display: flex; justify-content: center">
+          <app-form-button
+            [form]="hoursForm"
+            (buttonClick)="onSubmit($event)"
+            [text]="getButtonText"
+          ></app-form-button>
         </div>
       </div>
-      <div style="display: flex; justify-content: center">
-        <app-form-button
-          [form]="hoursForm"
-          (buttonClick)="onSubmit($event)"
-          [text]="getButtonText"
-        ></app-form-button>
-      </div>
-    </div>
-  </form>
+    </form>
 
-  <ng-container *ngIf="hours$ | async as hours">
-    <div class="add-hours__container">
-      <div class="marked-hours-container">
-        <div class="card" *ngIf="hours.length > 0">
-          <app-marked-hour-info-card
-            *ngFor="let hour of hours"
-            [setHour]="hour"
-            (click)="updateMarked(hour)"
-            (removeEmit)="removeItem($event)"
-          ></app-marked-hour-info-card>
+    <ng-container *ngIf="hours$ | async as hours">
+      <div class="add-hours__container">
+        <div class="marked-hours-container">
+          <div class="card" *ngIf="hours.length > 0">
+            <app-marked-hour-info-card
+              *ngFor="let hour of hours"
+              [setHour]="hour"
+              (click)="updateMarked(hour)"
+              (removeEmit)="removeItem($event)"
+            ></app-marked-hour-info-card>
+          </div>
         </div>
       </div>
-    </div>
-  </ng-container>
+    </ng-container>
+  </div>
 </main>

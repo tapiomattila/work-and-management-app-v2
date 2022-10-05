@@ -1,28 +1,35 @@
-<div class="flex-container">
-  <app-worksite-info-card
-    [worksite$]="mostRecentWorksite$"
-    [showAddress]="false"
-    [showTotal]="false"
-    [bgBlue]="true"
-  ></app-worksite-info-card>
-</div>
+<main class="card-container">
+  <app-header [title]="'Recent Worksite'"></app-header>
+  <div class="section">
+    <app-worksite-info-card
+      [worksite$]="mostRecentWorksite$"
+      [showAddress]="false"
+      [showTotal]="false"
+      [bgBlue]="true"
+    ></app-worksite-info-card>
 
-<div class="sec small-cards">
-  <app-small-card
-  [end]="true"
-  [total$]="total$"
-  [title]="'Total hours'"></app-small-card>
+    <div class="small-card__container">
+      <div class="small-card__unit">
+        <app-small-card
+          [total$]="total$"
+          [title]="'Total hours'"
+        ></app-small-card>
+      </div>
 
-  <app-small-card
-  [start]="true"
-  [total$]="totalForDay$"
-  [title]="'Current day'"></app-small-card>
-</div>
+      <div class="small-card__unit">
+        <app-small-card
+          [total$]="totalForDay$"
+          [title]="'Current day'"
+        ></app-small-card>
+      </div>
+    </div>
 
-<ng-container *ngIf="hours$ | async as hours">
-  <app-hours-chart
-    [label]="'Weekly hours'"
-    [hoursArray]="hours"
-    [labelArray]="labelArray"
-  ></app-hours-chart>
-</ng-container>
+    <ng-container *ngIf="hours$ | async as hours">
+      <app-hours-chart
+        [label]="'Weekly hours'"
+        [hoursArray]="hours"
+        [labelArray]="labelArray"
+      ></app-hours-chart>
+    </ng-container>
+  </div>
+</main>

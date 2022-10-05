@@ -8,6 +8,7 @@
   <app-hours-worksite-list-element
     *ngFor="let hour of hours"
     [setHour]="hour"
+    [removeIcon]="false"
   ></app-hours-worksite-list-element>
 </ng-container>
 <ng-template #loadingHours>
